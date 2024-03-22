@@ -2,95 +2,103 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
+use App\Entity\Order;
+use App\Entity\Comment;
+use App\Entity\Message;
 use ApiPlatform\Metadata\Get;
-use ApiPlatform\Metadata\GetCollection;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Symfony\Component\Serializer\Annotation\Groups;
-use App\Repository\UserRepository;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use App\Repository\UserRepository;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[ApiResource(
+    normalizationContext: ['groups' => ['read:user', 'read:users']],
+    denormalizationContext: ['groups' => ['write:user']],
     operations: [
-        new Get(normalizationContext: ['groups' => 'user:item']),
-        new GetCollection(normalizationContext: ['groups' => 'user:list'])
-    ],
-    order: ['createdAt' => 'DESC'],
-    paginationEnabled: false,
+        new Get(),
+        new GetCollection(),
+        new Post(),
+        new Put(),
+        new Delete()
+    ]
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['user:list', 'user:item'])]
+    #[Groups(['read:user', 'read:users', 'read:band', 'read:bands', 'read:messages', 'read:message', 'read:orders', 'read:order'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
-    #[Groups(['user:list', 'user:item'])]
+    #[Groups(['read:user', 'read:band', 'write:message', 'read:message', 'read:messages', 'read:orders', 'read:order'])]
     private ?string $email = null;
 
     /**
      * @var list<string> The user roles
      */
     #[ORM\Column]
-    #[Groups(['user:list', 'user:item'])]
+    #[Groups(['read:users', 'read:user'])]
     private array $roles = [];
 
     /**
      * @var string The hashed password
      */
-    #[ORM\Column]
-    #[Groups(['user:list', 'user:item'])]
+    #[ORM\Column(nullable: true)]
     private ?string $password = null;
 
     #[ORM\Column]
-    #[Groups(['user:list', 'user:item'])]
+    #[Groups(['read:users', 'read:user'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
-    #[Groups(['user:list', 'user:item'])]
+    #[Groups(['read:users', 'read:user'])]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['user:list', 'user:item'])]
+    #[Groups(['read:users', 'read:user', 'read:bands', 'read:band', 'read:messages', 'read:message', 'read:orders', 'read:order'])]
     private ?string $firstName = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['user:list', 'user:item'])]
+    #[Groups(['read:users', 'read:user', 'read:messages', 'read:message', 'write:message', 'read:orders', 'read:order'])]
     private ?string $lastName = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['user:list', 'user:item'])]
+    #[Groups(['read:users', 'read:user', 'read:comments', 'read:comment', 'write:comment'])]
     private ?string $userName = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(['user:list', 'user:item'])]
+    #[Groups(['read:user', 'read:bands', 'read:band'])]
     private ?\DateTimeImmutable $birthDate = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['user:list', 'user:item'])]
+    #[Groups(['read:user', 'read:bands', 'read:band', 'write:band'])]
     private ?string $bandRole = null;
-    
+
     #[ORM\ManyToOne(inversedBy: 'bandMember')]
-    #[Groups(['user:list', 'user:item'])]
+    #[Groups(['read:user', 'write:user', 'read:user', 'write:band'])]
     private ?Band $band = null;
 
     #[ORM\OneToMany(targetEntity: Order::class, mappedBy: 'buyer')]
-    #[Groups(['user:list', 'user:item'])]
+    #[Groups(['read:user'])]
     private Collection $orders;
 
-    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'authod')]
-    #[Groups(['user:list', 'user:item'])]
+    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'author')]
+    #[Groups(['read:user'])]
     private Collection $messages;
-    
+
     #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'author')]
-    #[Groups(['user:list', 'user:item'])]
+    #[Groups(['read:user'])]
     private Collection $comments;
 
     public function __construct()
@@ -100,6 +108,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->comments = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
         $this->updatedAt = new \DateTimeImmutable();
+        $this->roles = ['ROLE_USER'];
     }
 
     public function getId(): ?int
@@ -361,5 +370,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return $this;
+    }
+    
+    public function __toString(): string
+    {
+        return $this->email;
     }
 }

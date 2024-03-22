@@ -2,29 +2,57 @@
 
 namespace App\Entity;
 
-use App\Repository\PlateformRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use App\Entity\Song;
+use App\Entity\Album;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use App\Repository\PlateformRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: PlateformRepository::class)]
+#[ApiResource(
+    normalizationContext: ['groups' => ['read:plateform', 'read:plateforms']],
+    denormalizationContext: ['groups' => ['write:plateform']],
+    operations: [
+        new Get(),
+        new GetCollection(),
+        new Post(),
+        new Put(),
+        new Delete()
+    ],
+    order: ['name' => 'ASC'],
+    paginationEnabled: false,
+
+)]
 class Plateform
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['read:plateform', 'read:plateforms'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['read:plateform', 'read:plateforms', 'write:plateform'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['read:plateform', 'read:plateforms', 'write:plateform'])]
     private ?string $url = null;
 
     #[ORM\ManyToMany(targetEntity: Album::class, inversedBy: 'plateforms')]
+    #[Groups(['read:plateform'])]
     private Collection $albums;
 
     #[ORM\ManyToMany(targetEntity: Song::class, inversedBy: 'plateforms')]
+    #[Groups(['read:plateform'])]
     private Collection $songs;
 
     public function __construct()
@@ -108,5 +136,10 @@ class Plateform
         $this->songs->removeElement($song);
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->name;
     }
 }

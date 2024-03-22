@@ -2,20 +2,31 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
+use App\Entity\Band;
+use App\Entity\Song;
+use App\Entity\Plateform;
 use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\GetCollection;
-use Symfony\Component\Serializer\Annotation\Groups;
-use App\Repository\AlbumRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\AlbumRepository;
+use ApiPlatform\Metadata\ApiResource;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: AlbumRepository::class)]
 #[ApiResource(
-    operations: [
-        new Get(normalizationContext: ['groups' => 'album:item']),
-        new GetCollection(normalizationContext: ['groups' => 'album:list'])
+    normalizationContext: ['groups' => ['read:album', 'read:albums']],
+    denormalizationContext: ['groups' => ['write:album']],
+    operations:[
+        new Get(),
+        new GetCollection(),
+        new Put(),
+        new Post(),
+        new Delete()
     ],
     order: ['createdAt' => 'DESC'],
     paginationEnabled: false,
@@ -25,40 +36,40 @@ class Album
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['album:list', 'album:item'])]
+    #[Groups(['read:album', 'read:albums', 'read:band', 'read:bands', 'read:plateform'])]
     private ?int $id = null;
 
     #[ORM\Column]
-    #[Groups(['album:list', 'album:item'])]
+    #[Groups(['read:album', 'read:albums'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
-    #[Groups(['album:list', 'album:item'])]
+    #[Groups(['read:album', 'read:albums'])]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['album:list', 'album:item'])]
+    #[Groups(['read:album', 'read:albums', 'read:band', 'read:bands', 'read:plateform'])]
     private ?string $title = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['album:list', 'album:item'])]
+    #[Groups(['read:album', 'read:albums'])]
     private ?string $description = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(['album:list', 'album:item'])]
+    #[Groups(['read:album', 'read:albums', 'read:band', 'read:bands', 'read:plateform'])]
     private ?\DateTimeImmutable $releasedAt = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['album:list', 'album:item'])]
+    #[Groups(['read:album', 'read:albums', 'read:band', 'read:bands', 'read:plateform'])]
     private ?string $image = null;
 
     #[ORM\ManyToOne(inversedBy: 'albums')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['album:list', 'album:item'])]
+    #[Groups(['read:album', 'read:albums'])]
     private ?Band $band = null;
 
     #[ORM\OneToMany(targetEntity: Song::class, mappedBy: 'album')]
-    #[Groups(['album:list', 'album:item'])]
+    #[Groups(['read:album', 'read:albums'])]
     private Collection $songs;
 
     #[ORM\ManyToMany(targetEntity: Plateform::class, mappedBy: 'albums')]
@@ -216,5 +227,10 @@ class Album
         }
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->title;
     }
 }

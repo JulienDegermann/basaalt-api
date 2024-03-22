@@ -2,19 +2,26 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
-use ApiPlatform\Metadata\GetCollection;
-use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Metadata\Post;
 use Doctrine\DBAL\Types\Types;
+use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\ApiResource;
 use App\Repository\MessageRepository;
+use ApiPlatform\Metadata\GetCollection;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: MessageRepository::class)]
 #[ApiResource(
+    normalizationContext: ['groups' => ['read:messages', 'read:message']],
+    denormalizationContext: ['groups' => ['write:message']],
     operations: [
-        new Get(normalizationContext: ['groups' => 'message:item']),
-        new GetCollection(normalizationContext: ['groups' => 'message:list'])
+        new Get(),
+        new GetCollection(),
+        new Post(),
+        new Delete()
+
     ],
     order: ['createdAt' => 'DESC'],
     paginationEnabled: false,
@@ -24,24 +31,23 @@ class Message
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['message:list', 'message:item'])]
+    #[Groups(['read:messages', 'read:message'])]
     private ?int $id = null;
 
     #[ORM\Column]
-    #[Groups(['message:list', 'message:item'])]
+    #[Groups(['read:messages', 'read:message'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
-    #[Groups(['message:list', 'message:item'])]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Groups(['message:list', 'message:item'])]
+    #[Groups(['read:messages', 'read:message', 'write:message'])]
     private ?string $text = null;
 
     #[ORM\ManyToOne(inversedBy: 'messages')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['message:list', 'message:item'])]
+    #[Groups(['read:messages', 'read:message', 'write:message'])]
     private ?User $author = null;
 
     public function __construct()
@@ -101,5 +107,10 @@ class Message
         $this->author = $author;
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->text;
     }
 }

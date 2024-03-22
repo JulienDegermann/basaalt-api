@@ -2,55 +2,60 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
+use App\Entity\Stock;
 use ApiPlatform\Metadata\Get;
-use ApiPlatform\Metadata\GetCollection;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Symfony\Component\Serializer\Annotation\Groups;
-use App\Repository\ArticleRepository;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\ApiResource;
+use App\Repository\ArticleRepository;
+use ApiPlatform\Metadata\GetCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
 #[ApiResource(
+    normalizationContext: ['groups' => ['read:articles', 'read:article']],
+    denormalizationContext: ['groups' => ['write:article']],
     operations: [
-        new Get(normalizationContext: ['groups' => 'article:item']),
-        new GetCollection(normalizationContext: ['groups' => 'article:list'])
-    ],
-    order: ['year' => 'DESC', 'city' => 'ASC'],
-    paginationEnabled: false,
+        new Get(),
+        new GetCollection(),
+        new Post(),
+        new Put(),
+        new Delete()
+    ]
 )]
 class Article
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['article:list', 'article:item'])]
+    #[Groups(['read:articles', 'read:article', 'read:categories', 'read:category'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['article:list', 'article:item'])]
+    #[Groups(['read:articles', 'read:article', 'read:categories', 'read:category'])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['article:list', 'article:item'])]
+    #[Groups(['read:articles', 'read:article'])]
     private ?string $description = null;
 
     #[ORM\Column]
-    #[Groups(['article:list', 'article:item'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
-    #[Groups(['article:list', 'article:item'])]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'articles')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['article:list', 'article:item'])]
+    #[Groups(['read:articles', 'read:article'])]
     private ?Category $category = null;
 
     #[ORM\OneToMany(targetEntity: Stock::class, mappedBy: 'article', orphanRemoval: true)]
-    #[Groups(['article:list', 'article:item'])]
+    #[Groups(['read:articles', 'read:article'])]
     private Collection $stocks;
 
     public function __construct()
@@ -153,5 +158,10 @@ class Article
         }
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->name;
     }
 }

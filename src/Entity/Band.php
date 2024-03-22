@@ -2,20 +2,27 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
+use App\Entity\User;
+use App\Entity\Album;
 use ApiPlatform\Metadata\Get;
-use ApiPlatform\Metadata\GetCollection;
-use Symfony\Component\Serializer\Annotation\Groups;
-use App\Repository\BandRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\BandRepository;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Put;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Attribute\Groups;
+
 
 #[ORM\Entity(repositoryClass: BandRepository::class)]
 #[ApiResource(
-    operations: [
-        new Get(normalizationContext: ['groups' => 'band:item']),
-        new GetCollection(normalizationContext: ['groups' => 'band:list'])
+    normalizationContext: ['groups' => ['read:bands', 'read:band']],
+    denormalizationContext: ['groups' => 'write:band'],
+    operations:[
+        new Get(),
+        new GetCollection(),
+        new Put()
     ],
     order: ['createdAt' => 'DESC'],
     paginationEnabled: false,
@@ -25,39 +32,39 @@ class Band
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['band:list', 'band:item'])]
+    #[Groups(['read:band', 'read:bands', 'read:albums'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['band:list', 'band:item'])]
+    #[Groups(['read:bands', 'read:band', 'write:band', 'read:albums'])]
     private ?string $name = null;
 
     #[ORM\Column]
-    #[Groups(['band:list', 'band:item'])]
+    #[Groups(['read:band'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
-    #[Groups(['band:list', 'band:item'])]
+    #[Groups(['read:band'])]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['band:list', 'band:item'])]
+    #[Groups(['read:band', 'read:bands', 'write:band'])]
     private ?string $image = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['band:list', 'band:item'])]
+    #[Groups(['read:band', 'read:bands', 'write:band'])]
     private ?string $description = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['band:list', 'band:item'])]
+    #[Groups(['read:band', 'read:bands', 'write:band', 'read:albums'])]
     private ?string $genre = null;
 
     #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'band')]
-    #[Groups(['band:list', 'band:item'])]
+    #[Groups(['read:band', 'read:bands', 'write:band'])]
     private Collection $bandMember;
 
     #[ORM\OneToMany(targetEntity: Album::class, mappedBy: 'band')]
-    #[Groups(['band:list', 'band:item'])]
+    #[Groups(['read:band', 'read:bands'])]
     private Collection $albums;
 
     public function __construct()
@@ -203,5 +210,10 @@ class Band
         }
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->name;
     }
 }

@@ -2,33 +2,62 @@
 
 namespace App\Entity;
 
-use App\Repository\LiveRepository;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\LiveRepository;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use Symfony\Component\Serializer\Attribute\Groups;
+
 
 #[ORM\Entity(repositoryClass: LiveRepository::class)]
+#[ApiResource(
+    normalizationContext: ['groups' => ['read:live', 'read:lives']],
+    denormalizationContext: ['groups' => ['write:live']],
+    operations: [
+        new Get(),
+        new GetCollection(),
+        new Post(),
+        new Put(),
+        new Delete()
+    ],
+    order: ['eventDate' => 'DESC'],
+    paginationEnabled: false,
+
+)]
 class Live
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['read:live', 'read:lives'])]
     private ?int $id = null;
 
     #[ORM\Column]
+    #[Groups(['read:live'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
+    #[Groups(['read:live'])]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['read:live', 'read:lives', 'write:live'])]
     private ?string $eventName = null;
 
     #[ORM\Column]
+    #[Groups(['read:live', 'read:lives', 'write:live'])]
     private ?\DateTimeImmutable $eventDate = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $addess = null;
+    #[Groups(['read:live', 'read:lives', 'write:live'])]
+    private ?string $address = null;
 
     #[ORM\ManyToOne(inversedBy: 'lives')]
+    #[Groups(['read:live', 'read:lives'])]
     private ?City $city = null;
 
     public function __construct()
@@ -90,14 +119,14 @@ class Live
         return $this;
     }
 
-    public function getAddess(): ?string
+    public function getAddress(): ?string
     {
-        return $this->addess;
+        return $this->address;
     }
 
-    public function setAddess(string $addess): static
+    public function setAddress(string $address): static
     {
-        $this->addess = $addess;
+        $this->address = $address;
 
         return $this;
     }
@@ -112,5 +141,10 @@ class Live
         $this->city = $city;
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->eventName;
     }
 }

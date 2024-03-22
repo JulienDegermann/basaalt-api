@@ -9,10 +9,14 @@ use App\Repository\StockRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Serializer\Attribute\Groups;
+
 
 #[ORM\Entity(repositoryClass: StockRepository::class)]
 #[ApiResource(
+    normalizationContext: ['groups' => ['read:stocks', 'read:stock']],
+    denormalizationContext: ['groups' => ['stock:write']],
+
     operations: [
         new Get(normalizationContext: ['groups' => 'stock:item']),
         new GetCollection(normalizationContext: ['groups' => 'stock:list']),
@@ -25,19 +29,20 @@ class Stock
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['stock:list', 'stock:item'])]
+    #[Groups(['read:stocks', 'read:stock', 'read:articles', 'read:article'])]
     private ?int $id = null;
 
     #[ORM\Column]
-    #[Groups(['stock:list', 'stock:item'])]
+    #[Groups(['read:stocks', 'read:stock', 'read:articles', 'read:article', 'write:order'])]
     private ?int $quantity = null;
 
     #[ORM\ManyToOne(inversedBy: 'stocks')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['stock:list', 'stock:item'])]
+    #[Groups(['read:stocks', 'read:stock', 'read:articles', 'read:article', 'write:order'])]
     private ?Article $article = null;
 
     #[ORM\ManyToMany(targetEntity: Order::class, mappedBy: 'stock')]
+    #[Groups(['read:stocks', 'read:stock', 'read:articles', 'read:article', 'write:order'])]
     private Collection $orders;
 
     public function __construct()
@@ -99,5 +104,10 @@ class Stock
         }
 
         return $this;
+    }
+    
+    public function __toString(): string
+    {
+        return $this->id;
     }
 }

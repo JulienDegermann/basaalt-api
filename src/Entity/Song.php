@@ -2,36 +2,65 @@
 
 namespace App\Entity;
 
-use App\Repository\SongRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use App\Entity\Plateform;
+use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\SongRepository;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: SongRepository::class)]
+#[ApiResource(
+    normalizationContext: ['groups' => ['read:songs', 'read:song']],
+    denormalizationContext: ['groups' => ['write:song']],
+    operations:[
+        new Get(),
+        new GetCollection(),
+        new Post(),
+        new Put(),
+        new Delete()
+    ],
+    order: ['createdAt' => 'DESC'],
+    paginationEnabled: false,
+
+)]
 class Song
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups('read:plateform', 'read:songs', 'read:song', 'read:albums', 'read:album')]
     private ?int $id = null;
-
+    
     #[ORM\Column]
+    #[Groups('read:song')]
     private ?\DateTimeImmutable $createdAt = null;
-
+    
     #[ORM\Column]
+    #[Groups('read:song')]
     private ?\DateTimeImmutable $updatedAt = null;
-
+    
     #[ORM\Column(length: 255)]
+    #[Groups('read:songs', 'read:song', 'read:albums', 'read:album','read:plateform',  'write:song')]
     private ?string $title = null;
-
+    
     #[ORM\Column(length: 255, nullable: true)]
+    #[Groups('read:song', 'write:song')]
     private ?string $description = null;
-
+    
     #[ORM\Column(nullable: true)]
+    #[Groups('read:song', 'write:song', 'read:album', 'read:songs')]
     private ?\DateTimeImmutable $releasedAt = null;
-
+    
     #[ORM\ManyToOne(inversedBy: 'songs')]
     #[ORM\JoinColumn(nullable: false)]
+    #[Groups('read:song', 'write:song', 'read:songs', 'read:albums')]
     private ?Album $album = null;
 
     #[ORM\ManyToMany(targetEntity: Plateform::class, mappedBy: 'songs')]
@@ -146,5 +175,10 @@ class Song
         }
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->title;
     }
 }

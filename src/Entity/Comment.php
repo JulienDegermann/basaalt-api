@@ -2,18 +2,24 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
-use ApiPlatform\Metadata\GetCollection;
-use Symfony\Component\Serializer\Annotation\Groups;
-use App\Repository\CommentRepository;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\ApiResource;
+use App\Repository\CommentRepository;
+use ApiPlatform\Metadata\GetCollection;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: CommentRepository::class)]
 #[ApiResource(
+    normalizationContext: ['groups' => ['read:comments', 'read:comment']],
+    denormalizationContext: ['groups' => ['write:comment']],
     operations: [
-        new Get(normalizationContext: ['groups' => 'comment:item']),
-        new GetCollection(normalizationContext: ['groups' => 'comment:list'])
+        new Get(),
+        new GetCollection(),
+        new Post(),
+        new Delete()
     ],
     order: ['createdAt' => 'DESC'],
     paginationEnabled: false,
@@ -23,21 +29,23 @@ class Comment
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['comment:list', 'comment:item'])]
+    #[Groups(['read:comments', 'read:comment'])]
     private ?int $id = null;
 
     #[ORM\Column]
+    #[Groups(['read:comments', 'read:comment'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['read:comments', 'read:comment', 'write:comment'])]
     private ?string $text = null;
 
     #[ORM\ManyToOne(inversedBy: 'comments')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['comment:list', 'comment:item'])]
+    #[Groups(['read:comments', 'read:comment', 'write:comment'])]
     private ?User $author = null;
 
     public function __construct()
@@ -97,5 +105,10 @@ class Comment
         $this->author = $author;
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->text;
     }
 }

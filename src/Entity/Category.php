@@ -2,22 +2,33 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
+
+
+use App\Entity\Article;
 use ApiPlatform\Metadata\Get;
-use ApiPlatform\Metadata\GetCollection;
-use App\Repository\CategoryRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Metadata\ApiResource;
+use App\Repository\CategoryRepository;
+use ApiPlatform\Metadata\GetCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
 #[ApiResource(
+    normalizationContext: ['groups' => ['read:categories', 'read:category']],
+    denormalizationContext: ['groups' => 'write:category'],
     operations: [
-        new Get(normalizationContext: ['groups' => 'category:item']),
-        new GetCollection(normalizationContext: ['groups' => 'category:list'])
+        new Get(),
+        new GetCollection(),
+        new Put(),
+        new Post(),
+        new Delete()
+
     ],
-    // order: ['year' => 'DESC', 'city' => 'ASC'],
     paginationEnabled: false,
 )]
 class Category
@@ -25,22 +36,23 @@ class Category
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['read:categories', 'read:category', 'read:articles', 'read:article'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['category:list', 'category:item'])]
-
+    #[Groups(['read:categories', 'read:category', 'read:articles', 'read:article'])]
     private ?string $name = null;
 
     #[ORM\Column]
-    #[Groups(['category:list', 'category:item'])]
+    // #[Groups(['read:categories', 'read:category'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
-    #[Groups(['category:list', 'category:item'])]
+    // #[Groups(['read:categories', 'read:category'])]
     private ?\DateTimeImmutable $updatedAt = null;
-
+    
     #[ORM\OneToMany(targetEntity: Article::class, mappedBy: 'category')]
+    #[Groups(['read:categories', 'read:category'])]
     private Collection $articles;
 
     public function __construct()
@@ -119,5 +131,10 @@ class Category
         }
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->name;
     }
 }

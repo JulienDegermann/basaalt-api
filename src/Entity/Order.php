@@ -2,21 +2,32 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
+use App\Entity\Stock;
 use ApiPlatform\Metadata\Get;
-use ApiPlatform\Metadata\GetCollection;
-use Symfony\Component\Serializer\Annotation\Groups;
-use App\Repository\OrderRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Metadata\Put;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\OrderRepository;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Attribute\Groups;
+
 
 #[ORM\Entity(repositoryClass: OrderRepository::class)]
 #[ORM\Table(name: '`order`')]
 #[ApiResource(
+    normalizationContext: ['groups' => ['read:orders', 'read:order']],
+    denormalizationContext: ['groups' => ['write:order']],
     operations: [
-        new Get(normalizationContext: ['groups' => 'order:item']),
-        new GetCollection(normalizationContext: ['groups' => 'order:list'])
+        new Get(),
+        new GetCollection(),
+        new Post(),
+        new Delete(),
+        new Put()
+
     ],
     order: ['createdAt' => 'DESC'],
     paginationEnabled: false,
@@ -26,28 +37,28 @@ class Order
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['order:list', 'order:item'])]
+    #[Groups(['read:orders', 'read:order'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['order:list', 'order:item'])]
+    #[Groups(['read:orders', 'read:order'])]
     private ?string $status = null;
 
     #[ORM\Column]
-    #[Groups(['order:list', 'order:item'])]
+    #[Groups(['read:orders', 'read:order'])]
     private ?\DateTimeImmutable $createdAt = null;
 
     #[ORM\Column]
-    #[Groups(['order:list', 'order:item'])]
+    #[Groups(['read:orders', 'read:order'])]
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'orders')]
-    #[Groups(['order:list', 'order:item'])]
+    #[Groups(['read:orders', 'read:order'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $buyer = null;
 
     #[ORM\ManyToMany(targetEntity: Stock::class, inversedBy: 'orders')]
-    #[Groups(['order:list', 'order:item'])]
+    #[Groups(['read:orders', 'read:order'])]
     private Collection $stock;
 
     public function __construct()
@@ -132,5 +143,10 @@ class Order
         $this->stock->removeElement($stock);
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->id;
     }
 }
