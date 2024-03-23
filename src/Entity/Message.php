@@ -45,7 +45,7 @@ class Message
     #[Groups(['read:messages', 'read:message', 'write:message'])]
     private ?string $text = null;
 
-    #[ORM\ManyToOne(inversedBy: 'messages')]
+    #[ORM\ManyToOne(inversedBy: 'messages', cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(['read:messages', 'read:message', 'write:message'])]
     private ?User $author = null;

@@ -43,7 +43,7 @@ class Comment
     #[Groups(['read:comments', 'read:comment', 'write:comment'])]
     private ?string $text = null;
 
-    #[ORM\ManyToOne(inversedBy: 'comments')]
+    #[ORM\ManyToOne(inversedBy: 'comments', cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(['read:comments', 'read:comment', 'write:comment'])]
     private ?User $author = null;

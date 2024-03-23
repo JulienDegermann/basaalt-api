@@ -11,27 +11,32 @@ use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
-#[ApiResource(
-    normalizationContext: ['groups' => ['read:user', 'read:users']],
-    denormalizationContext: ['groups' => ['write:user']],
-    operations: [
-        new Get(),
-        new GetCollection(),
-        new Post(),
-        new Put(),
-        new Delete()
-    ]
-)]
+#[
+    ApiResource(
+        normalizationContext: ['groups' => ['read:user', 'read:users']],
+        denormalizationContext: ['groups' => ['write:user', 'write:message']],
+        operations: [
+            new Get(),
+            new GetCollection(),
+            new Post(),
+            new Put(),
+            new Delete()
+        ],
+    )
+]
+#[ApiFilter(SearchFilter::class, properties: ['email' => 'exact'])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -66,7 +71,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['read:users', 'read:user', 'read:bands', 'read:band', 'read:messages', 'read:message', 'read:orders', 'read:order'])]
+    #[Groups(['read:users', 'read:user', 'read:bands', 'read:band', 'read:messages', 'write:message', 'read:message', 'read:orders', 'read:order'])]
     private ?string $firstName = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -371,7 +376,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
-    
+
     public function __toString(): string
     {
         return $this->email;
