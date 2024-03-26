@@ -108,6 +108,6 @@ class Stock
     
     public function __toString(): string
     {
-        return $this->id;
+        return $this->quantity;
     }
 }

@@ -2,15 +2,12 @@
 
 namespace App\Controller\Admin;
 
-use DateTime;
 use App\Entity\Live;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
-use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
@@ -36,6 +33,9 @@ class LiveCrudController extends AbstractCrudController
             })
             ->update(Crud::PAGE_INDEX, 'edit', function (Action $action) {
                 return $action->setLabel('Modifier');
+            })
+            ->update(Crud::PAGE_INDEX, 'delete', function (Action $action) {
+                return $action->setLabel('Supprimer');
             })
             ->add(Crud::PAGE_INDEX, 'detail')
             ->update(Crud::PAGE_INDEX, 'detail', function (Action $action) {

@@ -3,16 +3,12 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Band;
-use App\Controller\Admin\DashboardController;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
-use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-
 
 class BandCrudController extends AbstractCrudController
 {
@@ -36,6 +32,9 @@ class BandCrudController extends AbstractCrudController
             ->update(Crud::PAGE_INDEX, 'edit', function (Action $action) {
                 return $action->setLabel('Modifier');
             })
+            ->update(Crud::PAGE_INDEX, 'delete', function (Action $action) {
+                return $action->setLabel('Supprimer');
+            })
             ->add(Crud::PAGE_INDEX, 'detail')
             ->update(Crud::PAGE_INDEX, 'detail', function (Action $action) {
                 return $action->setLabel('Voir');
@@ -45,8 +44,10 @@ class BandCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
-            TextField::new('title', 'Nom du groupe'),
-            TextEditorField::new('description'),
+            TextField::new('name', 'Nom du groupe'),
+            TextField::new('description'),
+            AssociationField::new('bandMember', 'Memnbres du groupe'),
+            
         ];
     }
 }
