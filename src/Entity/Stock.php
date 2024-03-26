@@ -38,7 +38,7 @@ class Stock
 
     #[ORM\ManyToOne(inversedBy: 'stocks')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['read:stocks', 'read:stock', 'read:articles', 'read:article', 'write:order'])]
+    #[Groups(['read:stocks', 'read:stock', 'write:order'])]
     private ?Article $article = null;
 
     #[ORM\ManyToMany(targetEntity: Order::class, mappedBy: 'stock')]

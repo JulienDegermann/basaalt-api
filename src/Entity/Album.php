@@ -36,7 +36,7 @@ class Album
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['read:album', 'read:albums', 'read:band', 'read:bands', 'read:plateform'])]
+    #[Groups(['read:album', 'read:albums', 'read:band', 'read:bands', 'read:plateform', 'read:songs', 'read:song'])]
     private ?int $id = null;
 
     #[ORM\Column]
@@ -48,7 +48,7 @@ class Album
     private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['read:album', 'read:albums', 'read:band', 'read:bands', 'read:plateform'])]
+    #[Groups(['read:album', 'read:albums', 'read:band', 'read:bands', 'read:plateform', 'read:songs', 'read:song'])]
     private ?string $title = null;
 
     #[ORM\Column(length: 255, nullable: true)]

@@ -28,14 +28,14 @@ use Symfony\Component\Serializer\Attribute\Groups;
     ],
     order: ['createdAt' => 'DESC'],
     paginationEnabled: false,
-
 )]
 class Song
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups('read:plateform', 'read:songs', 'read:song', 'read:albums', 'read:album')]
+    #[Groups(['read:song', 'read:songs', 'read:plateform', 'read:songs', 'read:song', 'read:albums', 'read:album'])]
+    
     private ?int $id = null;
     
     #[ORM\Column]
@@ -47,7 +47,7 @@ class Song
     private ?\DateTimeImmutable $updatedAt = null;
     
     #[ORM\Column(length: 255)]
-    #[Groups('read:songs', 'read:song', 'read:albums', 'read:album','read:plateform',  'write:song')]
+    #[Groups(['read:song', 'read:songs', 'read:plateform', 'read:albums', 'read:album', 'write:song'])]
     private ?string $title = null;
     
     #[ORM\Column(length: 255, nullable: true)]
@@ -55,12 +55,12 @@ class Song
     private ?string $description = null;
     
     #[ORM\Column(nullable: true)]
-    #[Groups('read:song', 'write:song', 'read:album', 'read:songs')]
+    #[Groups(['read:song', 'read:song', 'read:album', 'write:song'])]
     private ?\DateTimeImmutable $releasedAt = null;
     
     #[ORM\ManyToOne(inversedBy: 'songs')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups('read:song', 'write:song', 'read:songs', 'read:albums')]
+    #[Groups(['read:song', 'write:song', 'read:songs'])]
     private ?Album $album = null;
 
     #[ORM\ManyToMany(targetEntity: Plateform::class, mappedBy: 'songs')]

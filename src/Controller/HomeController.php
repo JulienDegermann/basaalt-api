@@ -59,6 +59,7 @@ class HomeController extends AbstractController
 
 
 
+        
 
         $jsonDatas = $serializer->serialize($datas, 'json');
 

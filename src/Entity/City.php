@@ -118,6 +118,6 @@ class City
 
     public function __toString(): string
     {
-        return $this->name;
+        return strtoupper($this->name) ." (" . $this->zipCode .")";
     }
 }
