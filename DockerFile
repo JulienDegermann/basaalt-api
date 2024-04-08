@@ -1,0 +1,32 @@
+FROM php:8.2-fpm-alpine
+
+RUN echo "Message de débogage"
+
+# Installation des dépendances nécessaires
+RUN apk update && \
+    apk add --no-cache \
+    git \
+    unzip \
+    libzip-dev \
+    zlib-dev \
+    icu-dev \
+    && docker-php-ext-install zip pdo_mysql mysqli pdo pdo_mysql
+
+# Installation de Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Installation de Symfony CLI 
+RUN curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.alpine.sh' | sh && apk add symfony-cli
+
+# Définition du répertoire de travail
+WORKDIR /var/www/html
+
+# Copie des fichiers de l'application Symfony dans le conteneur
+COPY . /var/www/html
+
+
+# Installation des dépendances Symfony
+RUN composer install --no-scripts --no-autoloader
+
+# Exposition du port 80
+EXPOSE 80

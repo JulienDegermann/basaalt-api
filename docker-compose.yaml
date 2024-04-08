@@ -1,0 +1,42 @@
+version: "3"
+
+services:
+  php: 
+    image: php:8.2-fpm-alpine
+    container_name: php
+    volumes:
+      - ./:/var/www
+    networks:
+      - symfony_app
+    build:
+      context: .
+      dockerfile: DockerFile
+  
+  apache:
+    image: httpd
+    container_name: apache
+    volumes:
+      - ./public:/etc/apache2/sites-enabled
+    networks:
+      - symfony_app
+    ports:
+      - "8000:80"
+
+  db:
+    container_name: database
+    image: mysql
+    volumes:
+      - ./docker/mysql:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: basaalt
+      MYSQL_USER: root
+      MYSQL_PASSWORD: E11a072f!
+    
+volumes:
+  db:
+  
+networks:
+  symfony_app:
+
+    
