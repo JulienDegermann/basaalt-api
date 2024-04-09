@@ -3,17 +3,18 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Album;
+use App\Traits\CrudActionTrait;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
 class AlbumCrudController extends AbstractCrudController
 {
+    use CrudActionTrait;
+    
     public static function getEntityFqcn(): string
     {
         return Album::class;
@@ -24,22 +25,12 @@ class AlbumCrudController extends AbstractCrudController
             ->setEntityLabelInPlural('Liste des albums')
             ->setEntityLabelInSingular('Détail de l\'album');
     }
+    
     public function configureActions(Actions $actions): Actions
     {
-        return $actions
-            ->update(Crud::PAGE_INDEX, 'new', function (Action $action) {
-                return $action->setLabel('Ajouter un album');
-            })
-            ->update(Crud::PAGE_INDEX, 'edit', function (Action $action) {
-                return $action->setLabel('Modifier');
-            })
-            ->update(Crud::PAGE_INDEX, 'delete', function (Action $action) {
-                return $action->setLabel('Supprimer');
-            })
-            ->add(Crud::PAGE_INDEX, 'detail')
-            ->update(Crud::PAGE_INDEX, 'detail', function (Action $action) {
-                return $action->setLabel('Voir');
-            });
+        $actions = $this->configureDefaultActions($actions);
+
+        return $actions;
     }
 
     public function configureFields(string $pageName): iterable
@@ -48,10 +39,10 @@ class AlbumCrudController extends AbstractCrudController
         return [
             // IdField::new('id'),
             TextField::new('title', 'Nom de l\'album'),
-            TextEditorField::new('description', 'Description'),
             DateField::new('releasedAt', 'Date de sortie'),
-            DateField::new('createdAt', 'Date de création')->hideOnIndex()->setDisabled(true),
-            DateField::new('updatedAt', 'Date de modification')->hideOnIndex()->setDisabled(true),
+            TextField::new('description', 'Description'),
+            DateField::new('createdAt', 'Date de création')->onlyOnDetail(),
+            DateField::new('updatedAt', 'Date de modification')->onlyOnDetail(),
             AssociationField::new('band', 'group')->hideOnIndex(),
             // AssociationField::new('band', 'group')
             //     ->setDisabled(false)

@@ -8,6 +8,7 @@ use App\Entity\Message;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Post;
+use App\Traits\DateEntityTrait;
 use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
@@ -18,6 +19,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
@@ -25,7 +27,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[
     ApiResource(
-        normalizationContext: ['groups' => ['read:user', 'read:users']],
+        normalizationContext: ['groups' => ['read:user', 'read:users', 'read:date']],
         denormalizationContext: ['groups' => ['write:user', 'write:message']],
         operations: [
             new Get(),
@@ -39,6 +41,9 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 #[ApiFilter(SearchFilter::class, properties: ['email' => 'exact'])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    // createdAt and updatedAt properties, getters and setters
+    use DateEntityTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -47,6 +52,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 180)]
     #[Groups(['read:user', 'read:band', 'write:message', 'read:message', 'read:messages', 'read:orders', 'read:order'])]
+    #[Assert\Sequentially([
+        new Assert\NotBlank(
+            message: 'Ce champ est obligatoire.'
+        ),
+        new Assert\Type(
+            type: 'string',
+            message: 'Ce champ doit être une chaîne de caractères.'
+        ),
+        new Assert\Length(
+            min: 5,
+            max: 180,
+            minMessage: 'Ce champ doit contenir au moins {{ limit }} caractères.',
+            maxMessage: 'Ce champ ne peut dépasser {{ limit }} caractères.'
+        ),
+        new Assert\Regex(
+            pattern: '/^([a-zA-Z0-9])+([a-zA-Z0-9\._-]+)*@([a-zA-Z0-9_-])+([a-zA-Z0-9\._-]+)$/',
+            message: 'E-mail invalide.'
+        )
+    ])]
     private ?string $email = null;
 
     /**
@@ -60,50 +84,142 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var string The hashed password
      */
     #[ORM\Column(nullable: true)]
+    #[Assert\Sequentially([
+        new Assert\Type(
+            type: 'string',
+            message: 'Le mot de passe doit être une chaîne de caractères.'
+        ),
+        new Assert\Length(
+            min: 12,
+            max: 255,
+            minMessage: 'Le mot de passe doit contenir plus de {{ limit }} caractères.',
+            maxMessage: 'Le mot de passe ne doit pas dépasser {{ limit }} caractères.'
+        ),
+        new Assert\Regex(
+            pattern: '/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{12,255}$/',
+            message: 'Le mot de passe n\'est pas sécurisé. Il doit contenir au minimum : 1 lettre majuscule, 1 lettre minuscule, 1 chiffre et 1 caractère spécial.'
+        )
+    ])]
     private ?string $password = null;
-
-    #[ORM\Column]
-    #[Groups(['read:users', 'read:user'])]
-    private ?\DateTimeImmutable $createdAt = null;
-
-    #[ORM\Column]
-    #[Groups(['read:users', 'read:user'])]
-    private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['read:users', 'read:user', 'read:bands', 'read:band', 'read:messages', 'write:message', 'read:message', 'read:orders', 'read:order'])]
+    #[Assert\Sequentially([
+        new Assert\NotBlank(
+            message: 'Ce champ est obligatoire.'
+        ),
+        new Assert\Type(
+            type: 'string',
+            message: 'Le format est invalide.'
+        ),
+        new Assert\Length(
+            min: 2,
+            max: 255,
+            minMessage: 'Ce champ doit contenir au moins {{ limit }} caractères.',
+            maxMessage: 'Ce champ ne peut dépasser {{ limit }} caractères.'
+        ),
+        new Assert\Regex(
+            pattern: '/^[a-zA-Z\s\-\p{L}]{2,255}$/u',
+            message: 'Ce champ contient des caractères non autorisés.'
+        )
+    ])]
     private ?string $firstName = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['read:users', 'read:user', 'read:messages', 'read:message', 'write:message', 'read:orders', 'read:order'])]
+    #[Assert\Sequentially([
+        new Assert\NotBlank(
+            message: 'Ce champ est obligatoire.'
+        ),
+        new Assert\Type(
+            type: 'string',
+            message: 'Le format est invalide.'
+        ),
+        new Assert\Length(
+            min: 2,
+            max: 255,
+            minMessage: 'Ce champ doit contenir au moins {{ limit }} caractères.',
+            maxMessage: 'Ce champ ne peut dépasser {{ limit }} caractères.'
+        ),
+        new Assert\Regex(
+            pattern: '/^[a-zA-Z\s\-\p{L}]{2,255}$/u',
+            message: 'Ce champ contient des caractères non autorisés.'
+        )
+    ])]
     private ?string $lastName = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['read:users', 'read:user', 'read:comments', 'read:comment', 'write:comment'])]
+    #[Assert\Sequentially([
+        new Assert\Type(
+            type: 'string',
+            message: 'Le format est invalide.'
+        ),
+        new Assert\Length(
+            min: 2,
+            max: 255,
+            minMessage: 'Ce champ doit contenir au moins {{ limit }} caractères.',
+            maxMessage: 'Ce champ ne peut dépasser {{ limit }} caractères.'
+        ),
+        new Assert\Regex(
+            pattern: '/^[a-zA-Z0-9\-\p{L}]{2,255}$/u',
+            message: 'Ce champ contient des caractères non autorisés.'
+        )
+    ])]
     private ?string $userName = null;
 
     #[ORM\Column(nullable: true)]
     #[Groups(['read:user', 'read:bands', 'read:band'])]
+    #[Assert\Sequentially([
+        new Assert\Type(
+            type: 'datetimeimmutable',
+            message: 'Ce champ doit être une date valide.'
+        ),
+        new Assert\LessThanOrEqual(
+            value: 'now  - 18 years',
+            message: 'Vous devez être majeur pour créer un compte.'
+        )
+    ])]
     private ?\DateTimeImmutable $birthDate = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['read:user', 'read:bands', 'read:band', 'write:band'])]
+    #[Assert\Sequentially([
+        new Assert\Type(
+            type: 'string',
+            message: 'Le format est invalide.'
+        ),
+        new Assert\Length(
+            min: 2,
+            max: 255,
+            minMessage: 'Ce champ doit contenir au moins {{ limit }} caractères.',
+            maxMessage: 'Ce champ ne peut dépasser {{ limit }} caractères.'
+        ),
+        new Assert\Regex(
+            pattern: '/^[a-zA-Z\s\-\p{L}]{2,255}$/u',
+            message: 'Ce champ contient des caractères non autorisés.'
+        )
+    ])]
     private ?string $bandRole = null;
 
     #[ORM\ManyToOne(inversedBy: 'bandMember')]
     #[Groups(['read:user', 'write:user', 'read:user', 'write:band'])]
+    #[Assert\Valid]
     private ?Band $band = null;
-
+    
     #[ORM\OneToMany(targetEntity: Order::class, mappedBy: 'buyer')]
     #[Groups(['read:user'])]
+    #[Assert\Valid]
     private Collection $orders;
-
+    
     #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'author')]
     #[Groups(['read:user'])]
+    #[Assert\Valid]
     private Collection $messages;
 
     #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'author')]
     #[Groups(['read:user'])]
+    #[Assert\Valid]
     private Collection $comments;
 
     public function __construct()
@@ -189,30 +305,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
-    }
-
-    public function getCreatedAt(): ?\DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTimeImmutable $createdAt): static
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    public function getUpdatedAt(): ?\DateTimeImmutable
-    {
-        return $this->updatedAt;
-    }
-
-    public function setUpdatedAt(\DateTimeImmutable $updatedAt): static
-    {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
     }
 
     public function getFirstName(): ?string

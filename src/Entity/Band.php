@@ -5,21 +5,23 @@ namespace App\Entity;
 use App\Entity\User;
 use App\Entity\Album;
 use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\Put;
+use App\Traits\DateEntityTrait;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\BandRepository;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
-use ApiPlatform\Metadata\Put;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Attribute\Groups;
-
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: BandRepository::class)]
 #[ApiResource(
-    normalizationContext: ['groups' => ['read:bands', 'read:band']],
+    normalizationContext: ['groups' => ['read:bands', 'read:band', 'read:date']],
     denormalizationContext: ['groups' => 'write:band'],
-    operations:[
+    operations: [
         new Get(),
         new GetCollection(),
         new Put()
@@ -29,6 +31,9 @@ use Symfony\Component\Serializer\Attribute\Groups;
 )]
 class Band
 {
+    // createdAt and updatedAt properties, getters and setters
+    use DateEntityTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -37,22 +42,75 @@ class Band
 
     #[ORM\Column(length: 255)]
     #[Groups(['read:bands', 'read:band', 'write:band', 'read:albums'])]
+    #[Assert\Sequentially([
+        new Assert\NotBlank(
+            message: 'Ce champ est obligatoire.'
+        ),
+        new Assert\Type(
+            type: 'string',
+            message: 'Ce champ doit être une chaîne de caractères.'
+        ),
+        new Assert\Length(
+            min: 1,
+            max: 255,
+            minMessage: 'Ce champ doit contenir au moins {{ limit }} caractères.',
+            maxMessage: 'Ce champ ne peut dépasser {{ limit }} caractères.'
+        ),
+        new Assert\Regex(
+            pattern: '/^[a-zA-Z0-9\s\-#]{1,255}$/u',
+            message: 'Ce champ contient des caractères non autorisés.'
+        )
+    ])]
     private ?string $name = null;
 
-    #[ORM\Column]
-    #[Groups(['read:band'])]
-    private ?\DateTimeImmutable $createdAt = null;
 
-    #[ORM\Column]
-    #[Groups(['read:band'])]
-    private ?\DateTimeImmutable $updatedAt = null;
+    #[Assert\Image(
+        allowLandscape: true,
+        allowPortrait: true,
+        maxSize: '5M',
+        maxSizeMessage: 'Le fichier est trop volumineux. La taille maximale autorisée est de {{ limit }} Mo.',
+        mimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'],
+        mimeTypesMessage: 'Le format de l\'image n\'est pas valide. Les formats valides sont {{ types }}.'
+    )]
+    private ?File $file = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['read:band', 'read:bands', 'write:band'])]
+    #[Assert\Sequentially([
+        new Assert\NotBlank(
+            message: 'Ce champ est obligatoire.'
+        ),
+        new Assert\Length(
+            min: 5,
+            max: 255,
+            minMessage: 'Ce champ doit contenir au moins {{ limit }} caractères.',
+            maxMessage: 'Ce champ est limité à {{ limit }} caractères.'
+        ),
+        new Assert\Regex(
+            pattern: '/^.+\.(jpg|jpeg|png|webp)$/u',
+            message: 'Ce champ contient des caractères non autorisés.'
+        )
+    ])]
     private ?string $image = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['read:band', 'read:bands', 'write:band'])]
+    #[Assert\Sequentially([
+        new Assert\Type(
+            type: 'string',
+            message: 'Ce champ doit être une chaîne de caractères.'
+        ),
+        new Assert\Length(
+            min: 5,
+            max: 255,
+            minMessage: 'Ce champ doit contenir au moins {{ limit }} caractères.',
+            maxMessage: 'Ce champ ne peut dépasser {{ limit }} caractères.'
+        ),
+        new Assert\Regex(
+            pattern: '/^[a-zA-Z0-9\s\-\(\)\'\".,:\p{L}]{5,255}$/u',
+            message: 'Ce champ contient des caractères non autorisés.'
+        )
+    ])]
     private ?string $description = null;
 
     #[ORM\Column(length: 255)]
@@ -92,26 +150,14 @@ class Band
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    public function getFile(): ?string
     {
-        return $this->createdAt;
+        return $this->file;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    public function setFile(?string $file): static
     {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    public function getUpdatedAt(): ?\DateTimeImmutable
-    {
-        return $this->updatedAt;
-    }
-
-    public function setUpdatedAt(\DateTimeImmutable $updatedAt): static
-    {
-        $this->updatedAt = $updatedAt;
+        $this->file = $file;
 
         return $this;
     }

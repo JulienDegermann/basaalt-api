@@ -6,6 +6,7 @@ use App\Entity\Stock;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Post;
+use App\Traits\DateEntityTrait;
 use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\OrderRepository;
@@ -14,12 +15,12 @@ use ApiPlatform\Metadata\GetCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Attribute\Groups;
-
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: OrderRepository::class)]
 #[ORM\Table(name: '`order`')]
 #[ApiResource(
-    normalizationContext: ['groups' => ['read:orders', 'read:order']],
+    normalizationContext: ['groups' => ['read:orders', 'read:order', 'read:date']],
     denormalizationContext: ['groups' => ['write:order']],
     operations: [
         new Get(),
@@ -34,6 +35,9 @@ use Symfony\Component\Serializer\Attribute\Groups;
 )]
 class Order
 {
+    // createdAt and updatedAt properties, getters and setters
+    use DateEntityTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -42,23 +46,36 @@ class Order
 
     #[ORM\Column(length: 255)]
     #[Groups(['read:orders', 'read:order'])]
+    #[Assert\Sequentially([
+        new Assert\NotBlank(
+            message: 'Ce champ est obligatoire.'
+        ),
+        new Assert\Type(
+            type: 'string',
+            message: 'Ce champ doit être une chaîne de caractères.'
+        ),
+        new Assert\Length(
+            min: 2,
+            max: 255,
+            minMessage: 'Ce champ doit contenir au moins {{ limit }} caractères.',
+            maxMessage: 'Ce champ est limité à {{ limit }} caractères.'
+        ),
+        new Assert\Regex(
+            pattern: '/^[a-zA-Z]{2,255}$/',
+            message: 'Ce champ contient des caractères non autorisés.'
+        )
+    ])]
     private ?string $status = null;
-
-    #[ORM\Column]
-    #[Groups(['read:orders', 'read:order'])]
-    private ?\DateTimeImmutable $createdAt = null;
-
-    #[ORM\Column]
-    #[Groups(['read:orders', 'read:order'])]
-    private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'orders')]
     #[Groups(['read:orders', 'read:order'])]
     #[ORM\JoinColumn(nullable: false)]
+    #[Assert\Valid]
     private ?User $buyer = null;
-
+    
     #[ORM\ManyToMany(targetEntity: Stock::class, inversedBy: 'orders')]
     #[Groups(['read:orders', 'read:order'])]
+    #[Assert\Valid]
     private Collection $stock;
 
     public function __construct()
@@ -81,30 +98,6 @@ class Order
     public function setStatus(string $status): static
     {
         $this->status = $status;
-
-        return $this;
-    }
-
-    public function getCreatedAt(): ?\DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTimeImmutable $createdAt): static
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    public function getUpdatedAt(): ?\DateTimeImmutable
-    {
-        return $this->updatedAt;
-    }
-
-    public function setUpdatedAt(\DateTimeImmutable $updatedAt): static
-    {
-        $this->updatedAt = $updatedAt;
 
         return $this;
     }

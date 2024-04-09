@@ -3,19 +3,18 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Order;
+use App\Traits\CrudActionTrait;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
 class OrderCrudController extends AbstractCrudController
 {
+    use CrudActionTrait;
+
     public static function getEntityFqcn(): string
     {
         return Order::class;
@@ -30,18 +29,11 @@ class OrderCrudController extends AbstractCrudController
 
     public function configureActions(Actions $actions): Actions
     {
-        return $actions
-            // ->remove(Crud::PAGE_INDEX, 'new')
-            ->update(Crud::PAGE_INDEX, 'edit', function (Action $action) {
-                return $action->setLabel('Modifier');
-            })
-            ->update(Crud::PAGE_INDEX, 'delete', function (Action $action) {
-                return $action->setLabel('Supprimer');
-            })
-            ->add(Crud::PAGE_INDEX, 'detail')
-            ->update(Crud::PAGE_INDEX, 'detail', function (Action $action) {
-                return $action->setLabel('Voir');
-            });
+        $actions = $this->configureDefaultActions($actions);
+        $actions
+            ->remove(Crud::PAGE_INDEX, 'new');
+
+        return $actions;
     }
 
     public function configureFields(string $pageName): iterable
@@ -54,10 +46,10 @@ class OrderCrudController extends AbstractCrudController
                 'Livrée' => 'recieved',
                 'Annulée' => 'aborted',
             ]),
-            DateTimeField::new('createdAt', 'Date de création')->setDisabled(true),
-            DateTimeField::new('updatedAt', 'Date de modification')->setDisabled(true),
-            AssociationField::new('buyer', 'Acheteur'),
-            AssociationField::new('stock', 'Quantité de produits'),
+            DateTimeField::new('createdAt', 'Date de création')->hideOnForm(),
+            DateTimeField::new('updatedAt', 'Date de modification')->hideOnForm(),
+            AssociationField::new('buyer', 'Acheteur')->setDisabled(true),
+            AssociationField::new('stock', 'Quantité de produits')->setDisabled(true),
 
         ];
     }

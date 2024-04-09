@@ -2,12 +2,11 @@
 
 namespace App\Entity;
 
-
-
 use App\Entity\Article;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Post;
+use App\Traits\DateEntityTrait;
 use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
@@ -16,10 +15,11 @@ use ApiPlatform\Metadata\GetCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
 #[ApiResource(
-    normalizationContext: ['groups' => ['read:categories', 'read:category']],
+    normalizationContext: ['groups' => ['read:categories', 'read:category', 'read:date']],
     denormalizationContext: ['groups' => 'write:category'],
     operations: [
         new Get(),
@@ -33,6 +33,9 @@ use Symfony\Component\Serializer\Attribute\Groups;
 )]
 class Category
 {
+    // createdAt and updatedAt properties, getters and setters
+    use DateEntityTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -41,18 +44,30 @@ class Category
 
     #[ORM\Column(length: 255)]
     #[Groups(['read:categories', 'read:category', 'read:articles', 'read:article'])]
+    #[Assert\Sequentially([
+        new Assert\NotBlank(
+            message: 'Ce champ est obligatoire.'
+        ),
+        new Assert\Type(
+            type: 'string',
+            message: 'Ce champ doit être une chaîne de caractères.'
+        ),
+        new Assert\Length(
+            min: 1,
+            max: 255,
+            minMessage: 'Ce champ doit contenir au moins {{ limit }} caractères.',
+            maxMessage: 'Ce champ ne peut dépasser {{ limit }} caractères.'
+        ),
+        new Assert\Regex(
+            pattern: '/^[a-zA-Z0-9\s\-]{1,255}$/u',
+            message: 'Ce champ contient des caractères non autorisés.'
+        )
+    ])]
     private ?string $name = null;
 
-    #[ORM\Column]
-    // #[Groups(['read:categories', 'read:category'])]
-    private ?\DateTimeImmutable $createdAt = null;
-
-    #[ORM\Column]
-    // #[Groups(['read:categories', 'read:category'])]
-    private ?\DateTimeImmutable $updatedAt = null;
-    
     #[ORM\OneToMany(targetEntity: Article::class, mappedBy: 'category')]
     #[Groups(['read:categories', 'read:category'])]
+    #[Assert\Valid]
     private Collection $articles;
 
     public function __construct()
@@ -75,30 +90,6 @@ class Category
     public function setName(string $name): static
     {
         $this->name = $name;
-
-        return $this;
-    }
-
-    public function getCreatedAt(): ?\DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTimeImmutable $createdAt): static
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    public function getUpdatedAt(): ?\DateTimeImmutable
-    {
-        return $this->updatedAt;
-    }
-
-    public function setUpdatedAt(\DateTimeImmutable $updatedAt): static
-    {
-        $this->updatedAt = $updatedAt;
 
         return $this;
     }

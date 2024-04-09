@@ -6,6 +6,7 @@ use App\Entity\Stock;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Post;
+use App\Traits\DateEntityTrait;
 use ApiPlatform\Metadata\Delete;
 use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
@@ -14,10 +15,11 @@ use ApiPlatform\Metadata\GetCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
 #[ApiResource(
-    normalizationContext: ['groups' => ['read:articles', 'read:article']],
+    normalizationContext: ['groups' => ['read:articles', 'read:article', 'read:date']],
     denormalizationContext: ['groups' => ['write:article']],
     operations: [
         new Get(),
@@ -29,6 +31,9 @@ use Symfony\Component\Serializer\Attribute\Groups;
 )]
 class Article
 {
+    // createdAt and updatedAt properties, getters and setters
+    use DateEntityTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -37,25 +42,56 @@ class Article
 
     #[ORM\Column(length: 255)]
     #[Groups(['read:articles', 'read:article', 'read:categories', 'read:category'])]
+    #[Assert\Sequentially([
+        new Assert\NotBlank(
+            message: 'Ce champ est obligatoire.'
+        ),
+        new Assert\Type(
+            type: 'string',
+            message: 'Ce champ doit être une chaîne de caractères.'
+        ),
+        new Assert\Length(
+            min: 3,
+            max: 255,
+            minMessage: 'Ce champ doit contenir au moins {{ limit }} caractères.',
+            maxMessage: 'Ce champ ne peut dépasser {{ limit }} caractères.'
+        ),
+        new Assert\Regex(
+            pattern: '/^[a-zA-Z0-9\s\-\p{L}]{5,255}$/u',
+            message: 'Ce champ contient des caractères non autorisés.'
+        )
+    ])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
     #[Groups(['read:articles', 'read:article'])]
+    #[Assert\Sequentially([
+        new Assert\Type(
+            type: 'string',
+            message: 'Ce champ doit être une chaîne de caractères.'
+        ),
+        new Assert\Length(
+            min: 5,
+            max: 255,
+            minMessage: 'Ce champ doit contenir au moins {{ limit }} caractères.',
+            maxMessage: 'Ce champ ne peut dépasser {{ limit }} caractères.'
+        ),
+        new Assert\Regex(
+            pattern: '/^[a-zA-Z0-9\s\-\(\)\'\".,:x\p{L}]{5,255}$/u',
+            message: 'Ce champ contient des caractères non autorisés.'
+        )
+    ])]
     private ?string $description = null;
-
-    #[ORM\Column]
-    private ?\DateTimeImmutable $createdAt = null;
-
-    #[ORM\Column]
-    private ?\DateTimeImmutable $updatedAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'articles')]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(['read:articles', 'read:article'])]
+    #[Assert\Valid]
     private ?Category $category = null;
 
     #[ORM\OneToMany(targetEntity: Stock::class, mappedBy: 'article', orphanRemoval: true)]
     #[Groups(['read:articles', 'read:article'])]
+    #[Assert\Valid]
     private Collection $stocks;
 
     public function __construct()
@@ -92,23 +128,6 @@ class Article
         $this->description = $description;
 
         return $this;
-    }
-
-    public function getCreatedAt(): ?\DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTimeImmutable $createdAt): static
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    public function getUpdatedAt(): ?\DateTimeImmutable
-    {
-        return $this->updatedAt;
     }
 
     public function setUpdatedAt(\DateTimeImmutable $updatedAt): static

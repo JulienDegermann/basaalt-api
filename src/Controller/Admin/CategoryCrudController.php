@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Category;
+use App\Traits\CrudActionTrait;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -12,6 +13,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
 class CategoryCrudController extends AbstractCrudController
 {
+    use CrudActionTrait;
+    
     public static function getEntityFqcn(): string
     {
         return Category::class;
@@ -27,18 +30,9 @@ class CategoryCrudController extends AbstractCrudController
 
     public function configureActions(Actions $actions): Actions
     {
-
-        return $actions
-            ->update(Crud::PAGE_INDEX, 'new', function (Action $action) {
-                return $action->setLabel('Ajouter une catégorie');
-            })
-            ->update(Crud::PAGE_INDEX, 'edit', function (Action $action) {
-                return $action->setLabel('Modifier');
-            })
-            ->add(Crud::PAGE_INDEX, 'detail')
-            ->update(Crud::PAGE_INDEX, 'detail', function (Action $action) {
-                return $action->setLabel('Voir');
-            });
+        $actions = $this->configureDefaultActions($actions);
+        
+        return $actions;
     }
 
 
@@ -46,8 +40,8 @@ class CategoryCrudController extends AbstractCrudController
     {
         return [
             TextField::new('name', 'Nom de la catégorie'),
-            DateTimeField::new('createdAt', 'Date de création')->setDisabled(true),
-            DateTimeField::new('updatedAt', 'Date de modification')->setDisabled(true),
+            DateTimeField::new('createdAt', 'Date de création')->hideOnForm(),
+            DateTimeField::new('updatedAt', 'Date de modification')->hideOnForm(),
         ];
     }
 }

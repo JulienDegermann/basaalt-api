@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Message;
+use App\Traits\CrudActionTrait;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -13,6 +14,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
 class MessageCrudController extends AbstractCrudController
 {
+    use CrudActionTrait;
+
     public static function getEntityFqcn(): string
     {
         return Message::class;
@@ -27,17 +30,13 @@ class MessageCrudController extends AbstractCrudController
 
     public function configureActions(Actions $actions): Actions
     {
-        return $actions
+        $actions = $this->configureDefaultActions($actions);
+        $actions
             ->remove(Crud::PAGE_INDEX, 'new')
             ->remove(Crud::PAGE_INDEX, 'edit')
+            ->remove(Crud::PAGE_DETAIL, 'edit');
 
-            ->add(Crud::PAGE_INDEX, 'detail')
-            ->update(Crud::PAGE_INDEX, 'delete', function (Action $action) {
-                return $action->setLabel('Supprimer');
-            })
-            ->update(Crud::PAGE_INDEX, 'detail', function (Action $action) {
-                return $action->setLabel('Voir');
-            });
+        return $actions;
     }
 
     public function configureFields(string $pageName): iterable

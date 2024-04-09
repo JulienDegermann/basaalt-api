@@ -6,7 +6,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 
-Trait CrudActionTrait {
+trait CrudActionTrait
+{
 
   public function configureDefaultActions(Actions $actions): Actions
   {
@@ -47,5 +48,4 @@ Trait CrudActionTrait {
         return $action->setLabel('Enregistrer et continuer à modifier');
       });
   }
-
 }

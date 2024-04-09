@@ -44,18 +44,17 @@ class DashboardController extends AbstractDashboardController
             ->setEntityLabelInPlural('...')
             ->showEntityActionsInlined()
             ->setPaginatorPageSize(30)
-            // ->setPageTitle()
             ->setDateTimeFormat('dd/MM/yyyy à HH:mm')
             ->setTimezone('Europe/Paris')
-            ->setDefaultSort(['createdAt' => 'DESC'])
-            // ->setFormOptions()
-        ;
+            ->setDefaultSort(['createdAt' => 'DESC']);
     }
 
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linkToDashboard('Accueil', 'fa fa-home');
         // -------------------------------------------------------------
+        
+        // group settings
         yield MenuItem::section('Gestion du groupe');
         yield MenuItem::linkToCrud('Le groupe', 'fa fa-people-group', Band::class);
         yield MenuItem::linkToCrud('Les concerts', 'fa fa-calendar-days', Live::class);
@@ -64,16 +63,22 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Titres', 'fa fa-music', Song::class);
 
         // -------------------------------------------------------------
+        
+        // e-commerce settings
         yield MenuItem::section('E-commerce');
         yield MenuItem::linkToCrud('Categories', 'fa fa-list', Category::class);
         yield MenuItem::linkToCrud('Articles', 'fa fa-shirt', Article::class);
-        yield MenuItem::linkToCrud('Stocks', 'fa fa-shirt', Stock::class);
-        yield MenuItem::linkToCrud('Commandes', 'fa fa-shirt', Order::class);
+        yield MenuItem::linkToCrud('Stocks', 'fa fa-boxes-stacked', Stock::class);
+        yield MenuItem::linkToCrud('Commandes', 'fa fa-cart-shopping', Order::class);
         // -------------------------------------------------------------
+        
+        // communication settings
         yield MenuItem::section('Messages & Commentaires');
         yield MenuItem::linkToCrud('Messages', 'fa fa-message', Message::class);
         yield MenuItem::linkToCrud('Commentaires', 'fa fa-comment', Comment::class);
         // -------------------------------------------------------------
+        
+        // accounts settings (super-admin only)
         yield MenuItem::linkToCrud('Utilisateurs', 'fa fa-user', User::class);
     }
 }

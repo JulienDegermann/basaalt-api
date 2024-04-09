@@ -57,13 +57,25 @@ class UserFixtures extends Fixture
           $current->setEmail($user['firstName'] . '@example.com');
         }
         if ($key === 'comments') {
-         $this->addReference('commentUser' . $userKey, $current);
+          $this->addReference('commentUser' . $userKey, $current);
         } else {
           $this->addReference('user' . $userKey, $current);
         }
         $manager->persist($current);
       }
     }
+
+    // add SuperAdmin
+    $superAdmin = new User();
+    $superAdmin
+      ->setUserName('SuperAdmin')
+      ->setEmail('admin@admin.com')
+      ->setRoles(['ROLE_SUPER_ADMIN', 'ROLE_ADMIN', 'ROLE_USER'])
+      ->setPassword('monMotDePasse123!')
+      ->setFirstName('Super')
+      ->setLastName('Admin')
+      ->setBirthDate(new \DateTimeImmutable('1988-10-18'));
+    $manager->persist($superAdmin);
 
     $manager->flush();
   }

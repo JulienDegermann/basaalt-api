@@ -2,15 +2,16 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
-use ApiPlatform\Metadata\GetCollection;
-use App\Repository\StockRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use App\Traits\DateEntityTrait;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\StockRepository;
+use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\GetCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Attribute\Groups;
-
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: StockRepository::class)]
 #[ApiResource(
@@ -26,23 +27,52 @@ use Symfony\Component\Serializer\Attribute\Groups;
 )]
 class Stock
 {
+    use DateEntityTrait;
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['read:stocks', 'read:stock', 'read:articles', 'read:article'])]
+    #[Groups(['read:stocks', 'read:stock', 'read:articles', 'read:article', 'read:date'])]
     private ?int $id = null;
 
     #[ORM\Column]
     #[Groups(['read:stocks', 'read:stock', 'read:articles', 'read:article', 'write:order'])]
+    #[Assert\Sequentially([
+        new Assert\NotBlank(
+            message: 'Ce champ est obligatoire.'
+        ),
+        new Assert\Type(
+            type: 'integer',
+            message: 'La quantité doit être un nombre entier.'
+        ),
+        new Assert\PositiveOrZero(
+            message: 'La quantité doit être supérieure ou égale à 0.'
+        ),
+        new Assert\LessThanOrEqual(
+            9999,
+            message: 'La quantité doit être inférieure ou égale à {{ value }}.'
+        ),
+        new Assert\GreaterThanOrEqual(
+            0,
+            message: 'La quantité doit être supérieure ou égale à {{ value }}.'
+        ),
+        new Assert\Regex(
+            pattern: '/^\d{1, 4}$/',
+            message: 'La .'
+        )
+
+    ])]
     private ?int $quantity = null;
 
     #[ORM\ManyToOne(inversedBy: 'stocks')]
     #[ORM\JoinColumn(nullable: false)]
     #[Groups(['read:stocks', 'read:stock', 'write:order'])]
+    #[Assert\Valid]
     private ?Article $article = null;
 
     #[ORM\ManyToMany(targetEntity: Order::class, mappedBy: 'stock')]
     #[Groups(['read:stocks', 'read:stock', 'read:articles', 'read:article', 'write:order'])]
+    #[Assert\Valid]
     private Collection $orders;
 
     public function __construct()
@@ -105,7 +135,7 @@ class Stock
 
         return $this;
     }
-    
+
     public function __toString(): string
     {
         return $this->quantity;
