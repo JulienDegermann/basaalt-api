@@ -77,9 +77,6 @@ class Band
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['read:band', 'read:bands', 'write:band'])]
     #[Assert\Sequentially([
-        new Assert\NotBlank(
-            message: 'Ce champ est obligatoire.'
-        ),
         new Assert\Length(
             min: 5,
             max: 255,
@@ -117,7 +114,7 @@ class Band
     #[Groups(['read:band', 'read:bands', 'write:band', 'read:albums'])]
     private ?string $genre = null;
 
-    #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'band')]
+    #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'band', cascade: ['persist', 'remove'])]
     #[Groups(['read:band', 'read:bands', 'write:band'])]
     private Collection $bandMember;
 

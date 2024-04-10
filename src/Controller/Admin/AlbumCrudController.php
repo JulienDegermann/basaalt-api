@@ -8,6 +8,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
@@ -40,14 +42,12 @@ class AlbumCrudController extends AbstractCrudController
             // IdField::new('id'),
             TextField::new('title', 'Nom de l\'album'),
             DateField::new('releasedAt', 'Date de sortie'),
-            TextField::new('description', 'Description'),
+            TextareaField::new('description', 'Description'),
             DateField::new('createdAt', 'Date de création')->onlyOnDetail(),
             DateField::new('updatedAt', 'Date de modification')->onlyOnDetail(),
-            AssociationField::new('band', 'group')->hideOnIndex(),
-            // AssociationField::new('band', 'group')
-            //     ->setDisabled(false)
-            //     ->setCustomOption('data', $this->$em->getRepository(Band::class)->findOneBy(['id' => 1] ))
-            //     ->setValue('basaalt'),
+            AssociationField::new('band', 'Groupe')->hideOnIndex(),
+            CollectionField::new('albumLinks', 'Liens')
+                ->useEntryCrudForm(AlbumLinksCrudController::class)
         ];
     }
 }

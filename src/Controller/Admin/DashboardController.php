@@ -14,6 +14,7 @@ use App\Entity\Comment;
 use App\Entity\Message;
 use App\Entity\Category;
 use App\Entity\Plateform;
+use App\Entity\SongLinks;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -26,7 +27,6 @@ class DashboardController extends AbstractDashboardController
     #[Route('/admin', name: 'admin')]
     public function index(): Response
     {
-
         return $this->render('admin/dashboard.html.twig');
     }
 
@@ -61,6 +61,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Streaming', 'fa-brands fa-spotify', Plateform::class);
         yield MenuItem::linkToCrud('Albums', 'fa fa-record-vinyl', Album::class);
         yield MenuItem::linkToCrud('Titres', 'fa fa-music', Song::class);
+        yield MenuItem::linkToCrud('Liens Chanson', 'fa fa-music', SongLinks::class);
 
         // -------------------------------------------------------------
         

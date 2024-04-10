@@ -117,9 +117,6 @@ class Album
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['read:album', 'read:albums', 'read:band', 'read:bands', 'read:plateform'])]
     #[Assert\Sequentially([
-        new Assert\NotBlank(
-            message: 'Ce champ est obligatoire.'
-        ),
         new Assert\Length(
             min: 5,
             max: 255,
@@ -144,16 +141,15 @@ class Album
     #[Assert\Valid]
     private Collection $songs;
 
-    #[ORM\ManyToMany(targetEntity: Plateform::class, mappedBy: 'albums')]
-    #[Assert\Valid]
-    private Collection $plateforms;
+    #[ORM\OneToMany(targetEntity: AlbumLinks::class, mappedBy: 'album', cascade: ['persist', 'remove'])]
+    private Collection $albumLinks;
 
     public function __construct()
     {
         $this->songs = new ArrayCollection();
-        $this->plateforms = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
         $this->updatedAt = new \DateTimeImmutable();
+        $this->albumLinks = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -278,7 +274,6 @@ class Album
     public function removeSong(Song $song): static
     {
         if ($this->songs->removeElement($song)) {
-            // set the owning side to null (unless already changed)
             if ($song->getAlbum() === $this) {
                 $song->setAlbum(null);
             }
@@ -287,35 +282,38 @@ class Album
         return $this;
     }
 
-    /**
-     * @return Collection<int, Plateform>
-     */
-    public function getPlateforms(): Collection
-    {
-        return $this->plateforms;
-    }
-
-    public function addPlateform(Plateform $plateform): static
-    {
-        if (!$this->plateforms->contains($plateform)) {
-            $this->plateforms->add($plateform);
-            $plateform->addAlbum($this);
-        }
-
-        return $this;
-    }
-
-    public function removePlateform(Plateform $plateform): static
-    {
-        if ($this->plateforms->removeElement($plateform)) {
-            $plateform->removeAlbum($this);
-        }
-
-        return $this;
-    }
-
     public function __toString(): string
     {
         return $this->title;
+    }
+
+    /**
+     * @return Collection<int, AlbumLinks>
+     */
+    public function getAlbumLinks(): Collection
+    {
+        return $this->albumLinks;
+    }
+
+    public function addAlbumLink(AlbumLinks $albumLink): static
+    {
+        if (!$this->albumLinks->contains($albumLink)) {
+            $this->albumLinks->add($albumLink);
+            $albumLink->setAlbum($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAlbumLink(AlbumLinks $albumLink): static
+    {
+        if ($this->albumLinks->removeElement($albumLink)) {
+            // set the owning side to null (unless already changed)
+            if ($albumLink->getAlbum() === $this) {
+                $albumLink->setAlbum(null);
+            }
+        }
+
+        return $this;
     }
 }

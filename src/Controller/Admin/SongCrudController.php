@@ -8,6 +8,8 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
@@ -38,11 +40,12 @@ class SongCrudController extends AbstractCrudController
     {
         return [
             TextField::new('title', 'Titre de la chanson'),
-            TextField::new('description')->hideOnIndex(),
+            TextareaField::new('description', 'Description')->hideOnIndex(),
             AssociationField::new('album', 'Album'),
             DateTimeField::new('releasedAt', 'Date de sortie'),
-            // DateTimeField::new('createdAt', 'Date de création'),
-            // DateTimeField::new('updatedAt', 'Dernière modification'),
+            CollectionField::new('songLinks', 'Liens')
+                ->useEntryCrudForm(SongLinksCrudController::class)
+                ->allowDelete(true)
         ];
     }
 }

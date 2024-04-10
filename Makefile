@@ -25,7 +25,7 @@ restart:
 db:
 	$(SYMFONY) make:migration --no-interaction
 	$(SYMFONY) doctrine:migrations:migrate --no-interaction
-	$(SYMFONY) clear:cache
+	$(SYMFONY) cache:clear
 .PHONY: update_db
 
 

@@ -3,12 +3,13 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Band;
+use App\Form\BandMemberType;
 use App\Traits\CrudActionTrait;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
 class BandCrudController extends AbstractCrudController
@@ -44,9 +45,9 @@ class BandCrudController extends AbstractCrudController
     {
         return [
             TextField::new('name', 'Nom du groupe'),
-            TextField::new('description'),
-            AssociationField::new('bandMember', 'Memnbres du groupe'),
-
+            TextareaField::new('description'),
+            CollectionField::new('bandMember', 'Memnbres du groupe')
+                ->setEntryType(BandMemberType::class)
         ];
     }
 }

@@ -7,6 +7,7 @@ use App\Traits\CrudActionTrait;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
@@ -40,7 +41,7 @@ class ArticleCrudController extends AbstractCrudController
         return [
             // IdField::new('id'),
             TextField::new('name', 'Nom de l\'article'),
-            TextField::new('description', 'Description'),
+            TextareaField::new('description', 'Description'),
             AssociationField::new('category', 'Catégorie'),
             AssociationField::new('stocks', 'Stocks')->onlyOnIndex(),
         ];

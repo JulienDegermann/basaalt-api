@@ -104,15 +104,14 @@ class Song
     #[Assert\Valid]
     private ?Album $album = null;
 
-    #[ORM\ManyToMany(targetEntity: Plateform::class, mappedBy: 'songs')]
-    #[Assert\Valid]
-    private Collection $plateforms;
+    #[ORM\OneToMany(targetEntity: SongLinks::class, mappedBy: 'song', cascade: ['persist'])]
+    private Collection $songLinks;
 
     public function __construct()
     {
-        $this->plateforms = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
         $this->updatedAt = new \DateTimeImmutable();
+        $this->songLinks = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -168,35 +167,38 @@ class Song
         return $this;
     }
 
-    /**
-     * @return Collection<int, Plateform>
-     */
-    public function getPlateforms(): Collection
-    {
-        return $this->plateforms;
-    }
-
-    public function addPlateform(Plateform $plateform): static
-    {
-        if (!$this->plateforms->contains($plateform)) {
-            $this->plateforms->add($plateform);
-            $plateform->addSong($this);
-        }
-
-        return $this;
-    }
-
-    public function removePlateform(Plateform $plateform): static
-    {
-        if ($this->plateforms->removeElement($plateform)) {
-            $plateform->removeSong($this);
-        }
-
-        return $this;
-    }
-
     public function __toString(): string
     {
         return $this->title;
+    }
+
+    /**
+     * @return Collection<int, SongLinks>
+     */
+    public function getSongLinks(): Collection
+    {
+        return $this->songLinks;
+    }
+
+    public function addSongLink(SongLinks $songLink): static
+    {
+        if (!$this->songLinks->contains($songLink)) {
+            $this->songLinks->add($songLink);
+            $songLink->setSong($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSongLink(SongLinks $songLink): static
+    {
+        if ($this->songLinks->removeElement($songLink)) {
+            // set the owning side to null (unless already changed)
+            if ($songLink->getSong() === $this) {
+                $songLink->setSong(null);
+            }
+        }
+
+        return $this;
     }
 }

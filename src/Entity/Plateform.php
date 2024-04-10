@@ -90,20 +90,8 @@ class Plateform
     ])]
     private ?string $url = null;
 
-    #[ORM\ManyToMany(targetEntity: Album::class, inversedBy: 'plateforms')]
-    #[Groups(['read:plateform'])]
-    #[Assert\Valid]
-    private Collection $albums;
-    
-    #[ORM\ManyToMany(targetEntity: Song::class, inversedBy: 'plateforms')]
-    #[Groups(['read:plateform'])]
-    #[Assert\Valid]
-    private Collection $songs;
-
     public function __construct()
     {
-        $this->albums = new ArrayCollection();
-        $this->songs = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
         $this->updatedAt = new \DateTimeImmutable();
     }
@@ -133,54 +121,6 @@ class Plateform
     public function setUrl(string $url): static
     {
         $this->url = $url;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Album>
-     */
-    public function getAlbums(): Collection
-    {
-        return $this->albums;
-    }
-
-    public function addAlbum(Album $album): static
-    {
-        if (!$this->albums->contains($album)) {
-            $this->albums->add($album);
-        }
-
-        return $this;
-    }
-
-    public function removeAlbum(Album $album): static
-    {
-        $this->albums->removeElement($album);
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Song>
-     */
-    public function getSongs(): Collection
-    {
-        return $this->songs;
-    }
-
-    public function addSong(Song $song): static
-    {
-        if (!$this->songs->contains($song)) {
-            $this->songs->add($song);
-        }
-
-        return $this;
-    }
-
-    public function removeSong(Song $song): static
-    {
-        $this->songs->removeElement($song);
 
         return $this;
     }
