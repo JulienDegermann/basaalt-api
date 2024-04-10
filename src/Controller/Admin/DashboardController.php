@@ -15,6 +15,7 @@ use App\Entity\Message;
 use App\Entity\Category;
 use App\Entity\Plateform;
 use App\Entity\SongLinks;
+use App\Entity\UserOrder;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -71,6 +72,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Articles', 'fa fa-shirt', Article::class);
         yield MenuItem::linkToCrud('Stocks', 'fa fa-boxes-stacked', Stock::class);
         yield MenuItem::linkToCrud('Commandes', 'fa fa-cart-shopping', Order::class);
+        yield MenuItem::linkToCrud('Commandes Réelles', 'fa fa-cart-shopping', UserOrder::class);
         // -------------------------------------------------------------
         
         // communication settings

@@ -3,11 +3,16 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Order;
+use App\Entity\Article;
 use App\Traits\CrudActionTrait;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
@@ -30,8 +35,8 @@ class OrderCrudController extends AbstractCrudController
     public function configureActions(Actions $actions): Actions
     {
         $actions = $this->configureDefaultActions($actions);
-        $actions
-            ->remove(Crud::PAGE_INDEX, 'new');
+        // $actions
+        //     ->remove(Crud::PAGE_INDEX, 'new');
 
         return $actions;
     }
@@ -39,18 +44,8 @@ class OrderCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
-            ChoiceField::new('status')->setChoices([
-                'Réception en cours' => 'not recieved',
-                'Paiement en attente' => 'payment required',
-                'Expédiée' => 'send',
-                'Livrée' => 'recieved',
-                'Annulée' => 'aborted',
-            ]),
-            DateTimeField::new('createdAt', 'Date de création')->hideOnForm(),
-            DateTimeField::new('updatedAt', 'Date de modification')->hideOnForm(),
-            AssociationField::new('buyer', 'Acheteur')->setDisabled(true),
-            AssociationField::new('stock', 'Quantité de produits')->setDisabled(true),
-
+            AssociationField::new('stocks', 'Articles'),
+            IntegerField::new('quantity', 'Qté'),
         ];
     }
 }

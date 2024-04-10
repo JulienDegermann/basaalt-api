@@ -25,8 +25,7 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
-#[
-    ApiResource(
+#[ApiResource(
         normalizationContext: ['groups' => ['read:user', 'read:users', 'read:date']],
         denormalizationContext: ['groups' => ['write:user', 'write:message']],
         operations: [
@@ -206,12 +205,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['read:user', 'write:user', 'read:user', 'write:band'])]
     #[Assert\Valid]
     private ?Band $band = null;
-    
-    #[ORM\OneToMany(targetEntity: Order::class, mappedBy: 'buyer')]
-    #[Groups(['read:user'])]
-    #[Assert\Valid]
-    private Collection $orders;
-    
+
     #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'author')]
     #[Groups(['read:user'])]
     #[Assert\Valid]
@@ -222,14 +216,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Valid]
     private Collection $comments;
 
+    #[ORM\OneToMany(targetEntity: UserOrder::class, mappedBy: 'buyer')]
+    private Collection $userOrders;
+
     public function __construct()
     {
-        $this->orders = new ArrayCollection();
         $this->messages = new ArrayCollection();
         $this->comments = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
         $this->updatedAt = new \DateTimeImmutable();
         $this->roles = ['ROLE_USER'];
+        $this->userOrders = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -380,36 +377,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, Order>
-     */
-    public function getOrders(): Collection
-    {
-        return $this->orders;
-    }
-
-    public function addOrder(Order $order): static
-    {
-        if (!$this->orders->contains($order)) {
-            $this->orders->add($order);
-            $order->setBuyer($this);
-        }
-
-        return $this;
-    }
-
-    public function removeOrder(Order $order): static
-    {
-        if ($this->orders->removeElement($order)) {
-            // set the owning side to null (unless already changed)
-            if ($order->getBuyer() === $this) {
-                $order->setBuyer(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Collection<int, Message>
      */
     public function getMessages(): Collection
@@ -472,5 +439,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __toString(): string
     {
         return $this->firstName && $this->lastName ? $this->firstName . ' ' . $this->lastName : $this->userName;
+    }
+
+    /**
+     * @return Collection<int, UserOrder>
+     */
+    public function getUserOrders(): Collection
+    {
+        return $this->userOrders;
+    }
+
+    public function addUserOrder(UserOrder $userOrder): static
+    {
+        if (!$this->userOrders->contains($userOrder)) {
+            $this->userOrders->add($userOrder);
+            $userOrder->setBuyer($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserOrder(UserOrder $userOrder): static
+    {
+        if ($this->userOrders->removeElement($userOrder)) {
+            // set the owning side to null (unless already changed)
+            if ($userOrder->getBuyer() === $this) {
+                $userOrder->setBuyer(null);
+            }
+        }
+
+        return $this;
     }
 }

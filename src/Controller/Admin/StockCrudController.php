@@ -33,16 +33,15 @@ class StockCrudController extends AbstractCrudController
     {
         return $crud
             ->setEntityLabelInSingular('Détail de l\'article')
-            ->setEntityLabelInPlural('Liste des articles')
-            ->setDefaultSort(['id' => 'DESC']);
+            ->setEntityLabelInPlural('Liste des articles');
     }
 
     public function configureFields(string $pageName): iterable
     {
         return [
             AssociationField::new('article', 'Article'),
-            IntegerField::new('quantity', 'Quantité'),
-            NumberField::new('price', 'Prix'),
+            IntegerField::new('quantity', 'Qté'),
+            NumberField::new('price', 'P.U. (€)'),
             TextField::new('size', 'Taille'),
 
         ];

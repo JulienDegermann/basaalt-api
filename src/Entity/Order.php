@@ -2,9 +2,9 @@
 
 namespace App\Entity;
 
-use App\Entity\Stock;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Put;
+use App\Traits\QuantityTrait;
 use ApiPlatform\Metadata\Post;
 use App\Traits\DateEntityTrait;
 use ApiPlatform\Metadata\Delete;
@@ -28,15 +28,14 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Post(),
         new Delete(),
         new Put()
-
     ],
     order: ['createdAt' => 'DESC'],
     paginationEnabled: false,
 )]
 class Order
 {
-    // createdAt and updatedAt properties, getters and setters
     use DateEntityTrait;
+    use QuantityTrait;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -44,45 +43,17 @@ class Order
     #[Groups(['read:orders', 'read:order'])]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
-    #[Groups(['read:orders', 'read:order'])]
-    #[Assert\Sequentially([
-        new Assert\NotBlank(
-            message: 'Ce champ est obligatoire.'
-        ),
-        new Assert\Type(
-            type: 'string',
-            message: 'Ce champ doit être une chaîne de caractères.'
-        ),
-        new Assert\Length(
-            min: 2,
-            max: 255,
-            minMessage: 'Ce champ doit contenir au moins {{ limit }} caractères.',
-            maxMessage: 'Ce champ est limité à {{ limit }} caractères.'
-        ),
-        new Assert\Regex(
-            pattern: '/^[a-zA-Z]{2,255}$/',
-            message: 'Ce champ contient des caractères non autorisés.'
-        )
-    ])]
-    private ?string $status = null;
-
     #[ORM\ManyToOne(inversedBy: 'orders')]
-    #[Groups(['read:orders', 'read:order'])]
-    #[ORM\JoinColumn(nullable: false)]
-    #[Assert\Valid]
-    private ?User $buyer = null;
-    
-    #[ORM\ManyToMany(targetEntity: Stock::class, inversedBy: 'orders')]
-    #[Groups(['read:orders', 'read:order'])]
-    #[Assert\Valid]
-    private Collection $stock;
+    private ?UserOrder $userOrder = null;
+
+    #[ORM\OneToMany(targetEntity: Stock::class, mappedBy: 'orders')]
+    private Collection $stocks;
 
     public function __construct()
     {
-        $this->stock = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
         $this->updatedAt = new \DateTimeImmutable();
+        $this->stocks = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -90,26 +61,19 @@ class Order
         return $this->id;
     }
 
-    public function getStatus(): ?string
+    // public function __toString(): string
+    // {
+    //     return $this->id;
+    // }
+
+    public function getUserOrder(): ?UserOrder
     {
-        return $this->status;
+        return $this->userOrder;
     }
 
-    public function setStatus(string $status): static
+    public function setUserOrder(?UserOrder $userOrder): static
     {
-        $this->status = $status;
-
-        return $this;
-    }
-
-    public function getBuyer(): ?User
-    {
-        return $this->buyer;
-    }
-
-    public function setBuyer(?User $buyer): static
-    {
-        $this->buyer = $buyer;
+        $this->userOrder = $userOrder;
 
         return $this;
     }
@@ -117,15 +81,16 @@ class Order
     /**
      * @return Collection<int, Stock>
      */
-    public function getStock(): Collection
+    public function getStocks(): Collection
     {
-        return $this->stock;
+        return $this->stocks;
     }
 
     public function addStock(Stock $stock): static
     {
-        if (!$this->stock->contains($stock)) {
-            $this->stock->add($stock);
+        if (!$this->stocks->contains($stock)) {
+            $this->stocks->add($stock);
+            $stock->setOrders($this);
         }
 
         return $this;
@@ -133,13 +98,13 @@ class Order
 
     public function removeStock(Stock $stock): static
     {
-        $this->stock->removeElement($stock);
+        if ($this->stocks->removeElement($stock)) {
+            // set the owning side to null (unless already changed)
+            if ($stock->getOrders() === $this) {
+                $stock->setOrders(null);
+            }
+        }
 
         return $this;
-    }
-
-    public function __toString(): string
-    {
-        return $this->id;
     }
 }

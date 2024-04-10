@@ -57,7 +57,7 @@ class Article
             maxMessage: 'Ce champ ne peut dépasser {{ limit }} caractères.'
         ),
         new Assert\Regex(
-            pattern: '/^[a-zA-Z0-9\s\-\p{L}]{5,255}$/u',
+            pattern: '/^[a-zA-Z0-9\s\-\p{L}]{3,255}$/u',
             message: 'Ce champ contient des caractères non autorisés.'
         )
     ])]
@@ -93,13 +93,6 @@ class Article
     #[Groups(['read:articles', 'read:article'])]
     #[Assert\Valid]
     private Collection $stocks;
-
-    public function __construct()
-    {
-        $this->stocks = new ArrayCollection();
-        $this->createdAt = new \DateTimeImmutable();
-        $this->updatedAt = new \DateTimeImmutable();
-    }
 
     public function getId(): ?int
     {
