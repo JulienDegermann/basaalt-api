@@ -83,7 +83,7 @@ class Song
         )
     ])]
     private ?string $description = null;
-
+    
     #[ORM\Column(nullable: true)]
     #[Groups(['read:song', 'read:song', 'read:album', 'write:song'])]
     #[Assert\Sequentially([
@@ -98,12 +98,12 @@ class Song
     private ?\DateTimeImmutable $releasedAt = null;
 
     #[ORM\ManyToOne(inversedBy: 'songs')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     #[Groups(['read:song', 'write:song', 'read:songs'])]
     #[Assert\Valid]
     private ?Album $album = null;
 
-    #[ORM\OneToMany(targetEntity: SongLinks::class, mappedBy: 'song', cascade: ['persist'])]
+    #[ORM\OneToMany(targetEntity: SongLinks::class, mappedBy: 'song', cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $songLinks;
 
     public function __construct()

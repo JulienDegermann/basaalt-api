@@ -141,7 +141,7 @@ class Album
     #[Assert\Valid]
     private Collection $songs;
 
-    #[ORM\OneToMany(targetEntity: AlbumLinks::class, mappedBy: 'album', cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(targetEntity: AlbumLinks::class, mappedBy: 'album', cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $albumLinks;
 
     public function __construct()

@@ -62,7 +62,6 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Streaming', 'fa-brands fa-spotify', Plateform::class);
         yield MenuItem::linkToCrud('Albums', 'fa fa-record-vinyl', Album::class);
         yield MenuItem::linkToCrud('Titres', 'fa fa-music', Song::class);
-        yield MenuItem::linkToCrud('Liens Chanson', 'fa fa-music', SongLinks::class);
 
         // -------------------------------------------------------------
         
