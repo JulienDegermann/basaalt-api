@@ -11,6 +11,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ColorField;
 
 class StockCrudController extends AbstractCrudController
 {
@@ -41,8 +42,8 @@ class StockCrudController extends AbstractCrudController
         return [
             AssociationField::new('article', 'Article'),
             IntegerField::new('quantity', 'Qté'),
-            NumberField::new('price', 'P.U. (€)'),
             TextField::new('size', 'Taille'),
+            ColorField::new('color', 'Couleur'),
 
         ];
     }

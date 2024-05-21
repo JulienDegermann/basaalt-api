@@ -4,10 +4,13 @@ namespace App\Controller\Admin;
 
 use App\Entity\Article;
 use App\Traits\CrudActionTrait;
+use Doctrine\Common\Collections\Collection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextEditorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
@@ -43,7 +46,10 @@ class ArticleCrudController extends AbstractCrudController
             TextField::new('name', 'Nom de l\'article'),
             TextareaField::new('description', 'Description'),
             AssociationField::new('category', 'Catégorie'),
-            AssociationField::new('stocks', 'Stocks')->onlyOnIndex(),
+            NumberField::new('price', 'P.U. (€)'),
+            CollectionField::new('stocks', 'Stocks')
+                ->useEntryCrudForm()
+                ->renderExpanded(),
         ];
     }
 }

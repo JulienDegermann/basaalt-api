@@ -9,7 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 trait SizeTrait
 {
   #[ORM\Column]
-  #[Groups(['read:stock', 'write:order'])]
+  #[Groups(['read:stock', 'read:article', 'write:order'])]
   #[Assert\Sequentially([
       new Assert\NotBlank(
           message: 'Ce champ est obligatoire.'

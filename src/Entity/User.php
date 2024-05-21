@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use App\Entity\Order;
 use App\Entity\Comment;
 use App\Entity\Message;
 use ApiPlatform\Metadata\Get;
@@ -102,7 +101,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['read:users', 'read:user', 'read:bands', 'read:band', 'read:messages', 'write:message', 'read:message', 'read:orders', 'read:order'])]
+    #[Groups(['read:users', 'read:user', 'read:bands', 'read:band', 'read:messages', 'write:user', 'write:message', 'read:message', 'read:orders', 'read:order'])]
     #[Assert\Sequentially([
         new Assert\NotBlank(
             message: 'Ce champ est obligatoire.'

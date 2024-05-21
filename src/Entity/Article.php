@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Entity\Stock;
+use App\Traits\PriceTrait;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Put;
 use ApiPlatform\Metadata\Post;
@@ -13,13 +14,12 @@ use ApiPlatform\Metadata\ApiResource;
 use App\Repository\ArticleRepository;
 use ApiPlatform\Metadata\GetCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
 #[ApiResource(
-    normalizationContext: ['groups' => ['read:articles', 'read:article', 'read:date']],
+    normalizationContext: ['groups' => ['read:articles', 'read:article', 'read:date', 'read:price', 'read:quantity']],
     denormalizationContext: ['groups' => ['write:article']],
     operations: [
         new Get(),
@@ -33,6 +33,7 @@ class Article
 {
     // createdAt and updatedAt properties, getters and setters
     use DateEntityTrait;
+    use PriceTrait;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]

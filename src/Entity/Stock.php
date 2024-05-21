@@ -3,7 +3,7 @@
 namespace App\Entity;
 
 use App\Traits\SizeTrait;
-use App\Traits\PriceTrait;
+use App\Traits\ColorTrait;
 use ApiPlatform\Metadata\Get;
 use App\Traits\QuantityTrait;
 use App\Traits\DateEntityTrait;
@@ -11,14 +11,12 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Repository\StockRepository;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: StockRepository::class)]
 #[ApiResource(
-    normalizationContext: ['groups' => ['read:stocks', 'read:stock']],
+    normalizationContext: ['groups' => ['read:stocks', 'read:stock', 'read:articles']],
     denormalizationContext: ['groups' => ['stock:write']],
     operations: [
         new Get(normalizationContext: ['groups' => 'stock:item']),
@@ -30,14 +28,14 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Stock
 {
     use DateEntityTrait;
-    use PriceTrait;
     use QuantityTrait;
     use SizeTrait;
+    use ColorTrait;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['read:stocks', 'read:stock', 'read:articles', 'read:article', 'read:date'])]
+    #[Groups(['read:stocks', 'read:stock', 'read:articles', 'read:date'])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'stocks')]
@@ -75,7 +73,7 @@ class Stock
 
     public function __toString(): string
     {
-        return $this->article->getName().'-'.$this->size.'-'.$this->price.'€';
+        return $this->size . ' - ' . $this->quantity;
     }
 
     public function getOrders(): ?Order

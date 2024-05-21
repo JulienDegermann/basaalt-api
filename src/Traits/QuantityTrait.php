@@ -10,7 +10,7 @@ trait QuantityTrait
 {
 
   #[ORM\Column]
-  #[Groups(['read:stock', 'write:order'])]
+  #[Groups(['read:quantity'])]
     #[Assert\Sequentially([
         new Assert\NotBlank(
             message: 'Ce champ est obligatoire.'
