@@ -45,8 +45,6 @@ class Album
     #[Groups(['read:album', 'read:albums', 'read:band', 'read:bands', 'read:plateform', 'read:songs', 'read:song'])]
     private ?int $id = null;
 
-
-
     #[ORM\Column(length: 255)]
     #[Groups(['read:album', 'read:albums', 'read:band', 'read:bands', 'read:plateform', 'read:songs', 'read:song'])]
     #[Assert\Sequentially([

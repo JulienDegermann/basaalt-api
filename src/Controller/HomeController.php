@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Repository\BandRepository;
 use App\Repository\SongRepository;
 use App\Repository\UserRepository;
-use App\Repository\AlbumRepository;
 use App\Repository\ArticleRepository;
 use App\Repository\PlateformRepository;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,7 +15,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class HomeController extends AbstractController
 {
-    #[Route('/', name: 'app_home')]
+    #[Route('/{url}', 
+    name: 'app_home', 
+    requirements: ['url' => '(?!admin).*'], 
+    defaults: ['url' => ''])]
     public function index(
         BandRepository $bandRepo,
         UserRepository $userRepo,
@@ -31,13 +33,9 @@ class HomeController extends AbstractController
         $plateformLinks = $plateformRepo->findAll();
 
         $band = $bandRepo->findAll();
-        // $band = $serializer->serialize($band, 'json');
-        // $band = json_decode($band);
 
         $newBandMembers = [];
         foreach ($bandMembers as $bandMember) {
-            // $bandMember = $serializer->serialize($bandMember, 'json');
-            // $bandMember = json_decode($bandMember);
             $newBandMembers[] = $bandMember;
         }
 
@@ -46,8 +44,6 @@ class HomeController extends AbstractController
 
         $newPlateformLinks = [];
         foreach ($plateformLinks as $plateformLink) {
-            // $plateformLink = $serializer->serialize($plateformLink, 'json');
-            // $plateformLink = json_decode($plateformLink);
             $newPlateformLinks[] = $plateformLink;
         }
 

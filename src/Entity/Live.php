@@ -101,6 +101,26 @@ class Live
     ])]
     private ?string $address = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['read:live', 'read:lives', 'write:live'])]
+    #[Assert\Sequentially([
+        new Assert\Type(
+            type: 'string',
+            message: 'Ce champ doit être une chaîne de caractères.'
+        ),
+        new Assert\Length(
+            min: 5,
+            max: 255,
+            minMessage: 'Ce champ doit contenir au moins {{ limit }} caractères.',
+            maxMessage: 'Ce champ ne peut dépasser {{ limit }} caractères.'
+        ),
+        new Assert\Regex(
+            pattern: '/https?:\/\/(?:www\.)?([-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b)*(\/[\/\d\w\.-]*)*(?:[\?])*(.+)*/',
+            message: 'URL non valide.'
+        )
+    ])]
+    private ?string $url = null;
+
     #[ORM\ManyToOne(inversedBy: 'lives')]
     #[Groups(['read:live', 'read:lives'])]
     #[Assert\Sequentially([
@@ -164,6 +184,19 @@ class Live
     public function setAddress(string $address): static
     {
         $this->address = $address;
+
+        return $this;
+    }
+
+
+    public function getUrl(): ?string
+    {
+        return $this->url;
+    }
+
+    public function setUrl(?string $url): static
+    {
+        $this->url = $url;
 
         return $this;
     }

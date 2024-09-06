@@ -63,14 +63,11 @@ class Plateform
     ])]
     private ?string $name = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['read:plateform', 'read:plateforms', 'write:plateform'])]
     #[Assert\Sequentially([
-        new Assert\NotBlank(
-            message: 'Ce champ est obligatoire.'
-        ),
         new Assert\Type(
-            type: 'string',
+            type: ['string'],
             message: 'Ce champ doit être une chaîne de caractères.'
         ),
         new Assert\Length(
@@ -114,7 +111,7 @@ class Plateform
         return $this->url;
     }
 
-    public function setUrl(string $url): static
+    public function setUrl(?string $url): static
     {
         $this->url = $url;
 

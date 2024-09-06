@@ -42,6 +42,7 @@ class LiveCrudController extends AbstractCrudController
             DateTimeField::new('eventDate', 'Date'),
             AssociationField::new('city', 'Ville'),
             TextField::new('address', 'Adresse'),
+            TextField::new('url', 'Lien'),
             DateTimeField::new('updatedAt', 'Dernière modification')->onlyOnIndex()
         ];
     }

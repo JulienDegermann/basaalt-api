@@ -13,6 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\ArticleRepository;
 use ApiPlatform\Metadata\GetCollection;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -90,7 +91,7 @@ class Article
     #[Assert\Valid]
     private ?Category $category = null;
 
-    #[ORM\OneToMany(targetEntity: Stock::class, mappedBy: 'article', orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: Stock::class, mappedBy: 'article', orphanRemoval: true, cascade: ['persist', 'remove'])]
     #[Groups(['read:articles', 'read:article'])]
     #[Assert\Valid]
     private Collection $stocks;
@@ -171,6 +172,14 @@ class Article
         }
 
         return $this;
+    }
+
+    public function __construct()
+    {
+        $this->stocks = new ArrayCollection();
+        $this->createdAt = new \DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
+    
     }
 
     public function __toString(): string
