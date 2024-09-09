@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Article;
+use App\Entity\Stock;
 use App\Traits\CrudActionTrait;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -46,7 +47,7 @@ class ArticleCrudController extends AbstractCrudController
             AssociationField::new('category', 'Catégorie'),
             NumberField::new('price', 'P.U. (€)'),
             CollectionField::new('stocks', 'Quantité en stock')
-                ->useEntryCrudForm()
+                ->useEntryCrudForm(StockCrudController::class)
                 ->renderExpanded(),
         ];
     }

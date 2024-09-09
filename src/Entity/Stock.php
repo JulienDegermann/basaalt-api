@@ -7,6 +7,8 @@ use App\Traits\ColorTrait;
 use ApiPlatform\Metadata\Get;
 use App\Traits\QuantityTrait;
 use App\Traits\DateEntityTrait;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\StockRepository;
 use ApiPlatform\Metadata\ApiResource;
@@ -47,10 +49,15 @@ class Stock
     #[ORM\ManyToOne(inversedBy: 'stocks')]
     private ?Order $orders = null;
 
+    #[Groups(['read:stocks', 'read:stock', 'read:articles', 'read:article', 'read:date'])]
+    #[ORM\OneToMany(targetEntity: StockImages::class, mappedBy: 'stock', orphanRemoval: true, cascade: ['persist', 'remove'])]
+    private Collection $stockImages;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->updatedAt = new \DateTimeImmutable();
+        $this->stockImages = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -84,6 +91,36 @@ class Stock
     public function setOrders(?Order $orders): static
     {
         $this->orders = $orders;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, StockImages>
+     */
+    public function getStockImages(): Collection
+    {
+        return $this->stockImages;
+    }
+
+    public function addStockImage(StockImages $stockImage): static
+    {
+        if (!$this->stockImages->contains($stockImage)) {
+            $this->stockImages->add($stockImage);
+            $stockImage->setStock($this);
+        }
+
+        return $this;
+    }
+
+    public function removeStockImage(StockImages $stockImage): static
+    {
+        if ($this->stockImages->removeElement($stockImage)) {
+            // set the owning side to null (unless already changed)
+            if ($stockImage->getStock() === $this) {
+                $stockImage->setStock(null);
+            }
+        }
 
         return $this;
     }
