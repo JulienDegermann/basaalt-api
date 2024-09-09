@@ -7,7 +7,6 @@ use App\Traits\CrudActionTrait;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
@@ -41,10 +40,9 @@ class StockCrudController extends AbstractCrudController
     {
         return [
             AssociationField::new('article', 'Article'),
-            IntegerField::new('quantity', 'Qté'),
             TextField::new('size', 'Taille'),
-            ColorField::new('color', 'Couleur'),
-
+            ColorField::new('color', 'Couleur')->setRequired(false)->setFormTypeOptions(['attr' => ['value' => null]]),
+            IntegerField::new('quantity', 'Quantité en stock'),
         ];
     }
 

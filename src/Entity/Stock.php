@@ -73,7 +73,7 @@ class Stock
 
     public function __toString(): string
     {
-        return $this->size . ' - ' . $this->quantity;
+        return $this->article->getName() . ' ' . $this->size . ' (' . $this->quantity . ')';
     }
 
     public function getOrders(): ?Order

@@ -52,21 +52,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['read:user', 'read:band', 'write:message', 'read:message', 'read:messages', 'read:orders', 'read:order'])]
     #[Assert\Sequentially([
         new Assert\NotBlank(
-            message: 'Ce champ est obligatoire.'
+            message: 'Email requis'
         ),
         new Assert\Type(
             type: 'string',
-            message: 'Ce champ doit être une chaîne de caractères.'
+            message: 'Email invalide : doit être une chaîne de caractères'
         ),
         new Assert\Length(
             min: 5,
             max: 180,
-            minMessage: 'Ce champ doit contenir au moins {{ limit }} caractères.',
-            maxMessage: 'Ce champ ne peut dépasser {{ limit }} caractères.'
+            minMessage: 'Email invalide : doit contenir au moins {{ limit }} caractères',
+            maxMessage: 'Email invalide : doit contenir au maximum {{ limit }} caractères'
         ),
         new Assert\Regex(
             pattern: '/^([a-zA-Z0-9])+([a-zA-Z0-9\._-]+)*@([a-zA-Z0-9_-])+([a-zA-Z0-9\._-]+)$/',
-            message: 'E-mail invalide.'
+            message: 'E-mail invalide : contient des caractères non autorisés'
         )
     ])]
     private ?string $email = null;
@@ -85,17 +85,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Sequentially([
         new Assert\Type(
             type: 'string',
-            message: 'Le mot de passe doit être une chaîne de caractères.'
+            message: 'Mot de passe invalide : doit être une chaîne de caractères'
         ),
         new Assert\Length(
             min: 12,
             max: 255,
-            minMessage: 'Le mot de passe doit contenir plus de {{ limit }} caractères.',
-            maxMessage: 'Le mot de passe ne doit pas dépasser {{ limit }} caractères.'
+            minMessage: 'Mot de passe invalide : doit contenir au moins {{ limit }} caractères',
+            maxMessage: 'Mot de passe invalide : doit contenir au maximum {{ limit }} caractères'
         ),
         new Assert\Regex(
             pattern: '/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{12,255}$/',
-            message: 'Le mot de passe n\'est pas sécurisé. Il doit contenir au minimum : 1 lettre majuscule, 1 lettre minuscule, 1 chiffre et 1 caractère spécial.'
+            message: 'Mot de passe invalide : doit contenir au minimum 1 lettre majuscule, 1 lettre minuscule, 1 chiffre et 1 caractère spécial.'
         )
     ])]
     private ?string $password = null;
@@ -104,21 +104,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['read:users', 'read:user', 'read:bands', 'read:band', 'read:messages', 'write:user', 'write:message', 'read:message', 'read:orders', 'read:order'])]
     #[Assert\Sequentially([
         new Assert\NotBlank(
-            message: 'Ce champ est obligatoire.'
+            message: 'Prénom requis'
         ),
         new Assert\Type(
             type: 'string',
-            message: 'Le format est invalide.'
+            message: 'Prénom invalide : doit être une chaîne de caractères'
         ),
         new Assert\Length(
             min: 2,
             max: 255,
-            minMessage: 'Ce champ doit contenir au moins {{ limit }} caractères.',
-            maxMessage: 'Ce champ ne peut dépasser {{ limit }} caractères.'
+            minMessage: 'Prénom invalide : doit contenir au moins {{ limit }} caractères',
+            maxMessage: 'Prénom invalide : doit contenir au maximum {{ limit }} caractères'
         ),
         new Assert\Regex(
             pattern: '/^[a-zA-Z\s\-\p{L}]{2,255}$/u',
-            message: 'Ce champ contient des caractères non autorisés.'
+            message: 'Prénom invalide : contient des caractères non autorisés'
         )
     ])]
     private ?string $firstName = null;
@@ -127,21 +127,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['read:users', 'read:user', 'read:messages', 'read:message', 'write:message', 'read:orders', 'read:order'])]
     #[Assert\Sequentially([
         new Assert\NotBlank(
-            message: 'Ce champ est obligatoire.'
+            message: 'Nom requis'
         ),
         new Assert\Type(
             type: 'string',
-            message: 'Le format est invalide.'
+            message: 'Nom invalide : doit être une chaîne de caractères'
         ),
         new Assert\Length(
             min: 2,
             max: 255,
-            minMessage: 'Ce champ doit contenir au moins {{ limit }} caractères.',
-            maxMessage: 'Ce champ ne peut dépasser {{ limit }} caractères.'
+            minMessage: 'Nom invalide : doit contenir au moins {{ limit }} caractères',
+            maxMessage: 'Nom invalide : doit contenir au maximum {{ limit }} caractères'
         ),
         new Assert\Regex(
             pattern: '/^[a-zA-Z\s\-\p{L}]{2,255}$/u',
-            message: 'Ce champ contient des caractères non autorisés.'
+            message: 'Nom invalide : contient des caractères non autorisés'
         )
     ])]
     private ?string $lastName = null;
@@ -151,17 +151,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Sequentially([
         new Assert\Type(
             type: 'string',
-            message: 'Le format est invalide.'
+            message: 'Pseudo invalide : doit être une chaîne de caractères'
         ),
         new Assert\Length(
             min: 2,
             max: 255,
-            minMessage: 'Ce champ doit contenir au moins {{ limit }} caractères.',
-            maxMessage: 'Ce champ ne peut dépasser {{ limit }} caractères.'
+            minMessage: 'Pseudo invalide : doit contenir au moins {{ limit }} caractères',
+            maxMessage: 'Pseudo invalide : doit contenir au maximum {{ limit }} caractères'
         ),
         new Assert\Regex(
             pattern: '/^[a-zA-Z0-9\-\p{L}]{2,255}$/u',
-            message: 'Ce champ contient des caractères non autorisés.'
+            message: 'Pseudo invalide : contient des caractères non autorisés'
         )
     ])]
     private ?string $userName = null;
@@ -171,7 +171,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Sequentially([
         new Assert\Type(
             type: 'datetimeimmutable',
-            message: 'Ce champ doit être une date valide.'
+            message: 'Date invalide'
         ),
         new Assert\LessThanOrEqual(
             value: 'now  - 18 years',
@@ -185,13 +185,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Sequentially([
         new Assert\Type(
             type: 'string',
-            message: 'Le format est invalide.'
+            message: 'Rôle invalide : doit être une chaîne de caractères'
         ),
         new Assert\Length(
             min: 2,
             max: 255,
-            minMessage: 'Ce champ doit contenir au moins {{ limit }} caractères.',
-            maxMessage: 'Ce champ ne peut dépasser {{ limit }} caractères.'
+            minMessage: 'Rôle invalide : doit contenir au moins {{ limit }} caractères',
+            maxMessage: 'Rôle invalide : doit contenir au maximum {{ limit }} caractères'
         ),
         new Assert\Regex(
             pattern: '/^[a-zA-Z\s\-\p{L}]{2,255}$/u',

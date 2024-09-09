@@ -43,21 +43,21 @@ class Message
     #[Groups(['read:messages', 'read:message', 'write:message', 'read:date'])]
     #[Assert\Sequentially([
         new Assert\NotBlank(
-            message: 'Ce champ est obligatoire.'
+            message: 'Message requis'
         ),
         new Assert\Type(
             type: 'string',
-            message: 'Le format est invalide.'
+            message: 'Message invalide : doit être une chaîne de caractères'
         ),
         new Assert\Length(
             min: 2,
             max: 255,
-            minMessage: 'Ce champ doit contenir au moins {{ limit }} caractères.',
-            maxMessage: 'Ce champ ne peut dépasser {{ limit }} caractères.'
+            minMessage: 'Message invalide : doit contenir au moins {{ limit }} caractères.',
+            maxMessage: 'Message invalide : doit contenir au maximum {{ limit }} caractères.'
         ),
         new Assert\Regex(
-            pattern: '/^[a-zA-Z0-9\s()\-\'?:.,!@\/\"\p{L}]{1,}$/u',
-            message: 'Ce champ contient des caractères non autorisés.'
+            pattern: '/^[a-zA-Z0-9\s()\-\'?:.,!@\/\"\p{L}]{2,}$/u',
+            message: 'Message invalide : contient des caractères non autorisés'
         )
     ])]
     private ?string $text = null;

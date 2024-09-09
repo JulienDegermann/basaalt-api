@@ -11,7 +11,6 @@ class TestController extends AbstractController
     #[Route('/contact', name: 'app_test')]
     public function index(): Response
     {
-        return new Response(file_get_contents('/public/dist/index.html'));
-        // return new Response(file_get_contents('../../reactApp/index.html'));
+        return new Response(file_get_contents('index.html'));
     }
 }

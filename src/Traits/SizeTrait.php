@@ -8,12 +8,9 @@ use Doctrine\ORM\Mapping as ORM;
 
 trait SizeTrait
 {
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     #[Groups(['read:stock', 'read:article', 'write:order'])]
     #[Assert\Sequentially([
-        new Assert\NotBlank(
-            message: 'Ce champ est obligatoire.'
-        ),
         new Assert\Type(
             type: 'string',
             message: 'Le prix doit être une chaîne de caractères.'
