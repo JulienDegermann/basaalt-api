@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Stock;
+use App\Form\StockImagesType;
 use App\Traits\CrudActionTrait;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -44,9 +45,11 @@ class StockCrudController extends AbstractCrudController
             ColorField::new('color', 'Couleur')->setRequired(false)->setFormTypeOptions(['attr' => ['value' => null]]),
             IntegerField::new('quantity', 'Quantité en stock'),
             CollectionField::new('stockImages', 'Images')
-                ->useEntryCrudForm()
-                ->setFormTypeOptions(['by_reference' => false])
-                ->renderExpanded(true)
+                ->setEntryType(StockImagesType::class)
+            // CollectionField::new('stockImages', 'Images')
+            //     ->useEntryCrudForm()
+            //     ->setFormTypeOptions(['by_reference' => false])
+            //     ->renderExpanded(true)
             // ImageField::new('stockImages', 'Images')
             //     ->setBasePath('/uploads')
             //     ->onlyOnIndex()

@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\StockImages;
+use App\Form\StockImagesType;
 use App\Traits\CrudActionTrait;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -40,11 +41,11 @@ class StockImagesCrudController extends AbstractCrudController
   {
     return [
       TextField::new('file', 'Image')
-        ->setFormType(VichImageType::class)
+        ->setFormType(StockImagesType::class)
         ->onlyOnForms(),
       ImageField::new('fileName', 'Image')
         ->setBasePath('/uploads/')
-        ->onlyOnIndex(),
+        ->onlyOnIndex()
       // AssociationField::new('stock', 'Stock')
       //   ->setRequired(true)
     ];

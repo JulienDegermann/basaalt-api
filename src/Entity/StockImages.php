@@ -42,10 +42,38 @@ use Symfony\Component\HttpFoundation\File\File;
     private ?int $id = null;
 
     #[Vich\UploadableField(mapping: 'article', fileNameProperty: 'fileName', size: 'fileSize')]
+    #[
+        Assert\Sequentially(
+            [
+                new Assert\Image(
+                    maxSize: '5M',
+                    maxSizeMessage: 'Image invalide : {{ max }}  maximum',
+                    // 'mimeTypes' => ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'],
+                    mimeTypes: ['image/jpeg'],
+                    mimeTypesMessage: 'Image invalide : formats acceptés jpeg',
+                    // 'mimeTypesMessage' => 'Image invalide : formats ±acceptés jpeg, jpg, png, gif',
+                )
+            ]
+        )
+    ]
     private ?File $file = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['read:stocks', 'read:stock', 'read:articles', 'read:article'])]
+    #[
+        Assert\Sequentially(
+            [
+                new Assert\Image(
+                    maxSize: '5M',
+                    maxSizeMessage: 'Image invalide : {{ max }}  maximum',
+                    // 'mimeTypes' => ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'],
+                    mimeTypes: ['image/jpeg'],
+                    mimeTypesMessage: 'Image invalide : formats acceptés jpeg',
+                    // 'mimeTypesMessage' => 'Image invalide : formats ±acceptés jpeg, jpg, png, gif',
+                )
+            ]
+        )
+    ]
     private ?string $fileName = null;
 
     private ?int $fileSize = null;
@@ -110,6 +138,6 @@ use Symfony\Component\HttpFoundation\File\File;
 
     public function __toString(): string
     {
-        return $this->fileName;
+        return $this->fileName ? $this->fileName : '';
     }
 }
