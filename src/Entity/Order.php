@@ -14,6 +14,7 @@ use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use InvalidArgumentException;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: OrderRepository::class)]
@@ -46,6 +47,34 @@ class Order
 
     #[ORM\OneToMany(targetEntity: ArticleCommand::class, mappedBy: 'order', cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $articleCommands;
+
+    #[ORM\Column(type: 'string')]
+    private ?string $status;
+
+    public function setStatus(string $status): static
+    {
+
+        $allowedStatuses = [
+            'saved',
+            'paymentValid',
+            'paymentNotValid',
+            'send',
+            'recieved',
+            'back'
+        ];
+
+        if (!in_array($status, $allowedStatuses)) {
+            throw new InvalidArgumentException('Statut de commande non valide');
+        }
+        $this->status = $status;
+
+        return $this;
+    }
+
+    public function getStatus(): ?string
+    {
+        return $this->status;
+    }
 
     public function __construct()
     {

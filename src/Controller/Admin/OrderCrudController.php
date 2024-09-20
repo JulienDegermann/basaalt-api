@@ -3,18 +3,12 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Order;
-use App\Entity\Article;
 use App\Traits\CrudActionTrait;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\NumberField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 
 class OrderCrudController extends AbstractCrudController
 {
@@ -46,8 +40,16 @@ class OrderCrudController extends AbstractCrudController
         return [
             CollectionField::new('articleCommands', 'Commandes')
                 ->useEntryCrudForm(),
+            ChoiceField::new('status', 'Statut')
+                ->setChoices([
+                    'Sauvegardée' => 'saved',
+                    'Paiement réglé' => 'paymentValid',
+                    'Paiement bloqué' => 'paymentNotValid',
+                    'Commande envoyée' => 'send',
+                    'Commande reçue' => 'recieved',
+                    'Commande retournée' => 'back'
+                ])
 //            AssociationField::new('userOrder', 'Client')
-
 
         ];
     }

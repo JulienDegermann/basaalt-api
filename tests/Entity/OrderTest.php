@@ -5,6 +5,7 @@ namespace App\Tests\Entity;
 use App\Entity\ArticleCommand;
 use App\Entity\Order;
 use Doctrine\Common\Collections\Collection;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 class OrderTest extends TestCase
@@ -68,9 +69,53 @@ class OrderTest extends TestCase
             $articleCommands[$i] = $articleCommand;
         }
         $i = rand(0, count($articleCommands) - 1);
-        
+
         $this->order->removeArticleCommand($this->order->getArticleCommands()[$i]);
         $this->assertNotContains($articleCommands[$i], $this->order->getArticleCommands());
     }
 
+
+    /**
+     * Given - an instance of Order
+     * When - a valid status is set
+     * Then - getSTatus returns status
+     */
+    public function testThatValidStatusCanBeSet()
+    {
+        $allowedStatuses = [
+            'saved',
+            'paymentValid',
+            'paymentNotValid',
+            'send',
+            'recieved',
+            'back'
+        ];
+
+        foreach ($allowedStatuses as $status) {
+            $this->order->setStatus($status);
+            $this->assertEquals($status, $this->order->getStatus());
+        }
+    }
+
+    /**
+     * Given - an instance of Order
+     * When - a non-valid status is set
+     * Then - setSTatus returns InvalidArgumentException
+     */
+    public function testThatNotValidStatusThrowsAnException()
+    {
+        $allowedStatuses = [
+            'solved',
+            'test',
+            'payée',
+            'bonjour',
+            'run',
+            'backed'
+        ];
+
+        foreach ($allowedStatuses as $status) {
+            $this->expectException(InvalidArgumentException::class);
+            $this->order->setStatus($status);
+        }
+    }
 }
