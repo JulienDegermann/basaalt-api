@@ -38,7 +38,7 @@ class Band
     #[ORM\GeneratedValue]
     #[ORM\Column]
     #[Groups(['read:band', 'read:bands', 'read:albums'])]
-    private ?int $id = null;
+    private ?int $id;
 
     #[ORM\Column(length: 255)]
     #[Groups(['read:bands', 'read:band', 'write:band', 'read:albums'])]
@@ -61,8 +61,7 @@ class Band
             message: 'Ce champ contient des caractères non autorisés.'
         )
     ])]
-    private ?string $name = null;
-
+    private ?string $name;
 
     #[Assert\Image(
         allowLandscape: true,
@@ -72,7 +71,7 @@ class Band
         mimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'],
         mimeTypesMessage: 'Le format de l\'image n\'est pas valide. Les formats valides sont {{ types }}.'
     )]
-    private ?File $file = null;
+    private ?File $file;
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['read:band', 'read:bands', 'write:band'])]
@@ -88,7 +87,7 @@ class Band
             message: 'Ce champ contient des caractères non autorisés.'
         )
     ])]
-    private ?string $image = null;
+    private ?string $image;
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['read:band', 'read:bands', 'write:band'])]
@@ -108,11 +107,11 @@ class Band
             message: 'Ce champ contient des caractères non autorisés.'
         )
     ])]
-    private ?string $description = null;
+    private ?string $description;
 
     #[ORM\Column(length: 255)]
     #[Groups(['read:band', 'read:bands', 'write:band', 'read:albums'])]
-    private ?string $genre = null;
+    private ?string $genre;
 
     #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'band', cascade: ['persist', 'remove'])]
     #[Groups(['read:band', 'read:bands', 'write:band'])]

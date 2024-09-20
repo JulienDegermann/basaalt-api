@@ -2,26 +2,23 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\Get;
-use ApiPlatform\Metadata\Put;
-use App\Traits\QuantityTrait;
-use ApiPlatform\Metadata\Post;
-use App\Traits\DateEntityTrait;
-use ApiPlatform\Metadata\Delete;
-use Doctrine\ORM\Mapping as ORM;
-use App\Repository\OrderRepository;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
-use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
+use App\Repository\OrderRepository;
+use App\Traits\DateEntityTrait;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Attribute\Groups;
-use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: OrderRepository::class)]
 #[ORM\Table(name: '`order`')]
 #[ApiResource(
-    normalizationContext: ['groups' => ['read:orders', 'read:order', 'read:date']],
-    denormalizationContext: ['groups' => ['write:order']],
     operations: [
         new Get(),
         new GetCollection(),
@@ -29,13 +26,14 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Delete(),
         new Put()
     ],
+    normalizationContext: ['groups' => ['read:orders', 'read:order', 'read:date']],
+    denormalizationContext: ['groups' => ['write:order']],
     order: ['createdAt' => 'DESC'],
     paginationEnabled: false,
 )]
 class Order
 {
     use DateEntityTrait;
-    use QuantityTrait;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -46,25 +44,20 @@ class Order
     #[ORM\ManyToOne(inversedBy: 'orders')]
     private ?UserOrder $userOrder = null;
 
-    #[ORM\OneToMany(targetEntity: Stock::class, mappedBy: 'orders')]
-    private Collection $stocks;
+    #[ORM\OneToMany(targetEntity: ArticleCommand::class, mappedBy: 'order', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    private Collection $articleCommands;
 
     public function __construct()
     {
-        $this->createdAt = new \DateTimeImmutable();
-        $this->updatedAt = new \DateTimeImmutable();
-        $this->stocks = new ArrayCollection();
+        $this->createdAt = new DateTimeImmutable();
+        $this->updatedAt = new DateTimeImmutable();
+        $this->articleCommands = new ArrayCollection();
     }
 
     public function getId(): ?int
     {
         return $this->id;
     }
-
-    // public function __toString(): string
-    // {
-    //     return $this->id;
-    // }
 
     public function getUserOrder(): ?UserOrder
     {
@@ -79,29 +72,29 @@ class Order
     }
 
     /**
-     * @return Collection<int, Stock>
+     * @return Collection<ArticleCommand>
      */
-    public function getStocks(): Collection
+    public function getArticleCommands(): Collection
     {
-        return $this->stocks;
+        return $this->articleCommands;
     }
 
-    public function addStock(Stock $stock): static
+    public function addarticleCommand(articleCommand $articleCommand): static
     {
-        if (!$this->stocks->contains($stock)) {
-            $this->stocks->add($stock);
-            $stock->setOrders($this);
+        if (!$this->articleCommands->contains($articleCommand)) {
+            $this->articleCommands->add($articleCommand);
+            $articleCommand->setOrder($this);
         }
 
         return $this;
     }
 
-    public function removeStock(Stock $stock): static
+    public function removearticleCommand(articleCommand $articleCommand): static
     {
-        if ($this->stocks->removeElement($stock)) {
+        if ($this->articleCommands->removeElement($articleCommand)) {
             // set the owning side to null (unless already changed)
-            if ($stock->getOrders() === $this) {
-                $stock->setOrders(null);
+            if ($articleCommand->getOrder() === $this) {
+                $articleCommand->setOrder(null);
             }
         }
 

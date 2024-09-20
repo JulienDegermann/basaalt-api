@@ -2,15 +2,16 @@
 
 namespace App\Traits;
 
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Serializer\Attribute\Groups;
+use App\Entity\ArticleCommand;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
+use UnexpectedValueException;
 
 trait QuantityTrait
 {
-
-  #[ORM\Column]
-  #[Groups(['read:quantity'])]
+    #[ORM\Column]
+    #[Groups(['read:quantity'])]
     #[Assert\Sequentially([
         new Assert\NotBlank(
             message: 'Ce champ est obligatoire.'
@@ -29,17 +30,23 @@ trait QuantityTrait
         new Assert\GreaterThanOrEqual(
             0,
             message: 'La quantité doit être supérieure ou égale à {{ value }}.'
-        )
+        ),
     ])]
     private ?int $quantity = null;
 
     public function getQuantity(): ?int
     {
-        return $this->quantity;
+        return !$this->quantity ? null : $this->quantity;
     }
 
     public function setQuantity(int $quantity): static
     {
+        if ($this instanceof ArticleCommand) {
+            if ($this->stock && $quantity > $this->stock->getQuantity()) {
+                throw new UnexpectedValueException("La quantité en stock est insuffisante.");
+            }
+        }
+
         $this->quantity = $quantity;
 
         return $this;

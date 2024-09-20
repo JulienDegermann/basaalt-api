@@ -7,6 +7,7 @@ use App\Traits\ColorTrait;
 use ApiPlatform\Metadata\Get;
 use App\Traits\QuantityTrait;
 use App\Traits\DateEntityTrait;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -18,12 +19,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: StockRepository::class)]
 #[ApiResource(
-    normalizationContext: ['groups' => ['read:stocks', 'read:stock', 'read:articles']],
-    denormalizationContext: ['groups' => ['stock:write']],
     operations: [
         new Get(normalizationContext: ['groups' => 'stock:item']),
         new GetCollection(normalizationContext: ['groups' => 'stock:list']),
     ],
+    normalizationContext: ['groups' => ['read:stocks', 'read:stock', 'read:articles']],
+    denormalizationContext: ['groups' => ['stock:write']],
     order: ['year' => 'DESC', 'city' => 'ASC'],
     paginationEnabled: false,
 )]
@@ -50,13 +51,17 @@ class Stock
     private ?Order $orders = null;
 
     #[Groups(['read:stocks', 'read:stock', 'read:articles', 'read:article', 'read:date'])]
-    #[ORM\OneToMany(targetEntity: StockImages::class, mappedBy: 'stock', orphanRemoval: true, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(targetEntity: StockImages::class, mappedBy: 'stock', cascade: ['persist', 'remove'], orphanRemoval: true,)]
     private Collection $stockImages;
+    #[ORM\OneToMany(targetEntity: ArticleCommand::class, mappedBy: 'stock', cascade: ['persist'], orphanRemoval: true)]
+    private Collection $articleCommands;
+
+
 
     public function __construct()
     {
-        $this->createdAt = new \DateTimeImmutable();
-        $this->updatedAt = new \DateTimeImmutable();
+        $this->createdAt = new DateTimeImmutable();
+        $this->updatedAt = new DateTimeImmutable();
         $this->stockImages = new ArrayCollection();
     }
 
@@ -123,5 +128,30 @@ class Stock
         }
 
         return $this;
+    }
+
+    public function addArticle(ArticleCommand $articleCommand): static
+    {
+        if (!$this->articleCommands->contains($articleCommand)) {
+            $this->add($articleCommand);
+        }
+        $articleCommand->setStock($this);
+
+        return $this;
+    }
+
+    public function removeArticle(ArticleCommand $articleCommand): static{
+        if ($this->articleCommands->remove($articleCommand)) {
+            if ($articleCommand->getStock() === $this) {
+
+                $articleCommand->setStock(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getArticleCommands(): Collection {
+        return $this->articleCommands;
     }
 }
