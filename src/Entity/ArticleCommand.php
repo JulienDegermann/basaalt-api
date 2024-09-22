@@ -30,7 +30,7 @@ class ArticleCommand
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['read:orders', 'read:order','read:date'])]
+    #[Groups(['read:orders', 'read:order', 'read:date'])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: "articleCommands")]
@@ -76,6 +76,6 @@ class ArticleCommand
 
     public function __toString(): string
     {
-        return (string) "$this->stock x $this->quantity";
+        return $this->getStock()->getArticle()->getName() . ' (taille : ' . $this->getStock()->getSize() . ', couleur : ' . $this->getStock()->getColor() . ") x $this->quantity";
     }
 }

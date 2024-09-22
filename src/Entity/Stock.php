@@ -2,18 +2,18 @@
 
 namespace App\Entity;
 
-use App\Traits\SizeTrait;
-use App\Traits\ColorTrait;
+use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
-use App\Traits\QuantityTrait;
+use ApiPlatform\Metadata\GetCollection;
+use App\Repository\StockRepository;
+use App\Traits\ColorTrait;
 use App\Traits\DateEntityTrait;
+use App\Traits\QuantityTrait;
+use App\Traits\SizeTrait;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use App\Repository\StockRepository;
-use ApiPlatform\Metadata\ApiResource;
-use ApiPlatform\Metadata\GetCollection;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -53,10 +53,9 @@ class Stock
     #[Groups(['read:stocks', 'read:stock', 'read:articles', 'read:article', 'read:date'])]
     #[ORM\OneToMany(targetEntity: StockImages::class, mappedBy: 'stock', cascade: ['persist', 'remove'], orphanRemoval: true,)]
     private Collection $stockImages;
+
     #[ORM\OneToMany(targetEntity: ArticleCommand::class, mappedBy: 'stock', cascade: ['persist'], orphanRemoval: true)]
     private Collection $articleCommands;
-
-
 
     public function __construct()
     {
@@ -82,10 +81,9 @@ class Stock
         return $this;
     }
 
-
     public function __toString(): string
     {
-        return $this->article->getName() . ' ' . $this->size . ' (' . $this->quantity . ')';
+        return $this->getArticle()->getName() . " (taille : $this->size, en stock : $this->quantity . )";
     }
 
     public function getOrders(): ?Order
@@ -140,10 +138,10 @@ class Stock
         return $this;
     }
 
-    public function removeArticle(ArticleCommand $articleCommand): static{
+    public function removeArticle(ArticleCommand $articleCommand): static
+    {
         if ($this->articleCommands->remove($articleCommand)) {
             if ($articleCommand->getStock() === $this) {
-
                 $articleCommand->setStock(null);
             }
         }
@@ -151,7 +149,8 @@ class Stock
         return $this;
     }
 
-    public function getArticleCommands(): Collection {
+    public function getArticleCommands(): Collection
+    {
         return $this->articleCommands;
     }
 }

@@ -2,45 +2,46 @@
 
 namespace App\Entity;
 
-use App\Entity\Comment;
-use App\Entity\Message;
-use ApiPlatform\Metadata\Get;
-use ApiPlatform\Metadata\Put;
-use ApiPlatform\Metadata\Post;
-use App\Traits\DateEntityTrait;
-use ApiPlatform\Metadata\Delete;
-use Doctrine\ORM\Mapping as ORM;
-use App\Repository\UserRepository;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
-use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
+use App\Repository\UserRepository;
+use App\Traits\AddressTrait;
+use App\Traits\DateEntityTrait;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
-use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 #[ApiResource(
-        normalizationContext: ['groups' => ['read:user', 'read:users', 'read:date']],
-        denormalizationContext: ['groups' => ['write:user', 'write:message']],
-        operations: [
-            new Get(),
-            new GetCollection(),
-            new Post(),
-            new Put(),
-            new Delete()
-        ],
-    )
+    operations: [
+        new Get(),
+        new GetCollection(),
+        new Post(),
+        new Put(),
+        new Delete(),
+    ],
+    normalizationContext: ['groups' => ['read:user', 'read:users', 'read:date']],
+    denormalizationContext: ['groups' => ['write:user', 'write:message']],
+)
 ]
 #[ApiFilter(SearchFilter::class, properties: ['email' => 'exact'])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     // createdAt and updatedAt properties, getters and setters
     use DateEntityTrait;
+    use AddressTrait;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -67,19 +68,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         new Assert\Regex(
             pattern: '/^([a-zA-Z0-9])+([a-zA-Z0-9\._-]+)*@([a-zA-Z0-9_-])+([a-zA-Z0-9\._-]+)$/',
             message: 'E-mail invalide : contient des caractères non autorisés'
-        )
+        ),
     ])]
     private ?string $email = null;
 
-    /**
-     * @var list<string> The user roles
-     */
     #[ORM\Column]
     #[Groups(['read:users', 'read:user'])]
-    private array $roles = [];
+    private array $roles;
 
     /**
-     * @var string The hashed password
+     * @var ?string The hashed password
      */
     #[ORM\Column(nullable: true)]
     #[Assert\Sequentially([
@@ -96,7 +94,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         new Assert\Regex(
             pattern: '/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{12,255}$/',
             message: 'Mot de passe invalide : doit contenir au minimum 1 lettre majuscule, 1 lettre minuscule, 1 chiffre et 1 caractère spécial.'
-        )
+        ),
     ])]
     private ?string $password = null;
 
@@ -119,7 +117,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         new Assert\Regex(
             pattern: '/^[a-zA-Z\s\-\p{L}]{2,255}$/u',
             message: 'Prénom invalide : contient des caractères non autorisés'
-        )
+        ),
     ])]
     private ?string $firstName = null;
 
@@ -142,7 +140,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         new Assert\Regex(
             pattern: '/^[a-zA-Z\s\-\p{L}]{2,255}$/u',
             message: 'Nom invalide : contient des caractères non autorisés'
-        )
+        ),
     ])]
     private ?string $lastName = null;
 
@@ -162,7 +160,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         new Assert\Regex(
             pattern: '/^[a-zA-Z0-9\-\p{L}]{2,255}$/u',
             message: 'Pseudo invalide : contient des caractères non autorisés'
-        )
+        ),
     ])]
     private ?string $userName = null;
 
@@ -176,9 +174,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         new Assert\LessThanOrEqual(
             value: 'now  - 18 years',
             message: 'Vous devez être majeur pour créer un compte.'
-        )
+        ),
     ])]
-    private ?\DateTimeImmutable $birthDate = null;
+    private ?DateTimeImmutable $birthDate = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['read:user', 'read:bands', 'read:band', 'write:band'])]
@@ -196,7 +194,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         new Assert\Regex(
             pattern: '/^[a-zA-Z\s\-\p{L}]{2,255}$/u',
             message: 'Ce champ contient des caractères non autorisés.'
-        )
+        ),
     ])]
     private ?string $bandRole = null;
 
@@ -205,27 +203,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Valid]
     private ?Band $band = null;
 
-    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'author')]
+    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'author', cascade: ['remove', 'persist'], orphanRemoval: true)]
     #[Groups(['read:user'])]
     #[Assert\Valid]
     private Collection $messages;
 
-    #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'author')]
+    #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'author', cascade: ['remove', 'persist'], orphanRemoval: true)]
     #[Groups(['read:user'])]
     #[Assert\Valid]
     private Collection $comments;
 
-    #[ORM\OneToMany(targetEntity: UserOrder::class, mappedBy: 'buyer')]
-    private Collection $userOrders;
+    #[ORM\OneToMany(targetEntity: Order::class, mappedBy: 'buyer', cascade: ['remove', 'persist'], orphanRemoval: true)]
+    private Collection $orders;
 
     public function __construct()
     {
         $this->messages = new ArrayCollection();
         $this->comments = new ArrayCollection();
-        $this->createdAt = new \DateTimeImmutable();
-        $this->updatedAt = new \DateTimeImmutable();
+        $this->createdAt = new DateTimeImmutable();
+        $this->updatedAt = new DateTimeImmutable();
+        $this->orders = new ArrayCollection();
         $this->roles = ['ROLE_USER'];
-        $this->userOrders = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -252,26 +250,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->email;
+        return (string)$this->email;
     }
 
     /**
      * @see UserInterface
-     *
-     * @return list<string>
      */
     public function getRoles(): array
     {
         $roles = $this->roles;
+
         // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
     }
 
-    /**
-     * @param list<string> $roles
-     */
     public function setRoles(array $roles): static
     {
         $this->roles = $roles;
@@ -339,12 +333,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getBirthDate(): ?\DateTimeImmutable
+    public function getBirthDate(): ?DateTimeImmutable
     {
         return $this->birthDate;
     }
 
-    public function setBirthDate(?\DateTimeImmutable $birthDate): static
+    public function setBirthDate(?DateTimeImmutable $birthDate): static
     {
         $this->birthDate = $birthDate;
 
@@ -441,32 +435,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, UserOrder>
+     * @return Collection<int, Order>
      */
-    public function getUserOrders(): Collection
+    public function getorders(): Collection
     {
-        return $this->userOrders;
-    }
-
-    public function addUserOrder(UserOrder $userOrder): static
-    {
-        if (!$this->userOrders->contains($userOrder)) {
-            $this->userOrders->add($userOrder);
-            $userOrder->setBuyer($this);
-        }
-
-        return $this;
-    }
-
-    public function removeUserOrder(UserOrder $userOrder): static
-    {
-        if ($this->userOrders->removeElement($userOrder)) {
-            // set the owning side to null (unless already changed)
-            if ($userOrder->getBuyer() === $this) {
-                $userOrder->setBuyer(null);
-            }
-        }
-
-        return $this;
+        return $this->orders;
     }
 }

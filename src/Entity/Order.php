@@ -9,6 +9,7 @@ use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
 use App\Repository\OrderRepository;
+use App\Traits\AddressTrait;
 use App\Traits\DateEntityTrait;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -25,7 +26,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
         new GetCollection(),
         new Post(),
         new Delete(),
-        new Put()
+        new Put(),
     ],
     normalizationContext: ['groups' => ['read:orders', 'read:order', 'read:date']],
     denormalizationContext: ['groups' => ['write:order']],
@@ -35,6 +36,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
 class Order
 {
     use DateEntityTrait;
+    use AddressTrait;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -43,7 +45,7 @@ class Order
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'orders')]
-    private ?UserOrder $userOrder = null;
+    private ?User $buyer = null;
 
     #[ORM\OneToMany(targetEntity: ArticleCommand::class, mappedBy: 'order', cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $articleCommands;
@@ -51,18 +53,41 @@ class Order
     #[ORM\Column(type: 'string')]
     private ?string $status;
 
+    private ?float $totalPrice = 0;
+
+    #[ORM\Column(nullable: true)]
+    private ?DateTimeImmutable $expectedDeliveryDate;
+
+    #[ORM\Column(type: 'string', nullable: true)]
+    private ?string $deliveryUrl;
+
+    public function __construct()
+    {
+        $this->createdAt = new DateTimeImmutable();
+        $this->updatedAt = new DateTimeImmutable();
+        $this->articleCommands = new ArrayCollection();
+    }
+
+    public function getTotalPrice(): ?float
+    {
+        $price = 0;
+        foreach ($this->articleCommands as $articleCommand) {
+            $price += $articleCommand->getStock()->getArticle()->getPrice() * $articleCommand->getQuantity();
+        }
+
+        return $price;
+    }
+
     public function setStatus(string $status): static
     {
-
         $allowedStatuses = [
             'saved',
             'paymentValid',
             'paymentNotValid',
             'send',
             'recieved',
-            'back'
+            'back',
         ];
-
         if (!in_array($status, $allowedStatuses)) {
             throw new InvalidArgumentException('Statut de commande non valide');
         }
@@ -76,26 +101,19 @@ class Order
         return $this->status;
     }
 
-    public function __construct()
-    {
-        $this->createdAt = new DateTimeImmutable();
-        $this->updatedAt = new DateTimeImmutable();
-        $this->articleCommands = new ArrayCollection();
-    }
-
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getUserOrder(): ?UserOrder
+    public function getBuyer(): ?User
     {
-        return $this->userOrder;
+        return $this->buyer;
     }
 
-    public function setUserOrder(?UserOrder $userOrder): static
+    public function setBuyer(?User $buyer): static
     {
-        $this->userOrder = $userOrder;
+        $this->buyer = $buyer;
 
         return $this;
     }
@@ -126,6 +144,30 @@ class Order
                 $articleCommand->setOrder(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getExpectedDeliveryDate(): ?DateTimeImmutable
+    {
+        return $this->expectedDeliveryDate;
+    }
+
+    public function setExpectedDeliveryDate(?DateTimeImmutable $expectedDeliveryDate): static
+    {
+        $this->expectedDeliveryDate = $expectedDeliveryDate;
+
+        return $this;
+    }
+
+    public function getDeliveryUrl(): ?string
+    {
+        return $this->deliveryUrl;
+    }
+
+    public function setDeliveryUrl(?string $deliveryUrl): static
+    {
+        $this->deliveryUrl = $deliveryUrl;
 
         return $this;
     }

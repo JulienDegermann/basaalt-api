@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
-use App\Entity\Live;
-use Doctrine\ORM\Mapping as ORM;
-use App\Repository\CityRepository;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
-use Doctrine\Common\Collections\Collection;
+use App\Repository\CityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: CityRepository::class)]
@@ -16,7 +16,6 @@ use Symfony\Component\Serializer\Attribute\Groups;
     operations: [
         new GetCollection(normalizationContext: ['groups' => ['read:cities']]),
     ],
-
 )]
 class City
 {
@@ -25,24 +24,47 @@ class City
     #[ORM\Column]
     #[Groups(['read:cities', 'read:lives', 'read:live'])]
     private ?int $id = null;
-
     #[ORM\Column(length: 255)]
     #[Groups(['read:cities', 'read:lives', 'read:live'])]
     private ?string $name = null;
-
     #[ORM\Column(length: 255)]
     #[Groups(['read:cities', 'read:lives', 'read:live'])]
     private ?string $zipCode = null;
-
     #[ORM\Column(length: 255)]
     private ?string $inseeCode = null;
-
     #[ORM\OneToMany(targetEntity: Live::class, mappedBy: 'city')]
     private Collection $lives;
+    #[ORM\OneToMany(targetEntity: Live::class, mappedBy: 'city')]
+    private Collection $addresses;
+
+    public function addAddress(Address $address): static
+    {
+        $this->addresses->add($address);
+        if (!$address->getCity()) {
+            $address->setCity($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAddress(Address $address): static
+    {
+        if ($this->addresses->removeElement($address)) {
+            $address->setCity(null);
+        };
+
+        return $this;
+    }
 
     public function __construct()
     {
         $this->lives = new ArrayCollection();
+        $this->addresses = new ArrayCollection();
+    }
+
+    public function getAdresses(): Collection
+    {
+        return $this->addresses;
     }
 
     public function getId(): ?int
@@ -118,6 +140,6 @@ class City
 
     public function __toString(): string
     {
-        return strtoupper($this->name) ." (" . $this->zipCode .")";
+        return strtoupper($this->name) . " (" . $this->zipCode . ")";
     }
 }

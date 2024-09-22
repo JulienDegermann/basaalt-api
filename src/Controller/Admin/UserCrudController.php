@@ -4,11 +4,13 @@ namespace App\Controller\Admin;
 
 use App\Entity\User;
 use App\Traits\CrudActionTrait;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 class UserCrudController extends AbstractCrudController
 {
@@ -45,7 +47,16 @@ class UserCrudController extends AbstractCrudController
             DateTimeField::new('createdAt', 'Date de création')->onlyOnIndex(),
             DateTimeField::new('updatedAt', 'Date de modification')->onlyOnIndex(),
             DateTimeField::new('birthDate', 'Date de naissance')->hideOnIndex(),
+            TextField::new('address', 'Adresse')->hideOnIndex(),
+            AssociationField::new('city', 'Ville'),
+            ChoiceField::new('roles', 'Rôles')
+                ->setChoices([
+                    'Visiteur' => 'ROLE_USER',
+                    'Client' => 'ROLE_CLIENT',
+                    'Administrateur' => 'ROLE_ADMIN',
+                    'Super Admin' => 'ROLE_SUPER_ADMIN',
+                ])
+                ->allowMultipleChoices(),
         ];
     }
-
 }

@@ -3,17 +3,12 @@
 namespace App\Controller\Admin;
 
 use App\Entity\ArticleCommand;
-use App\Entity\Band;
-use App\Form\BandMemberType;
 use App\Traits\CrudActionTrait;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
 class ArticleCommandCrudController extends AbstractCrudController
 {
@@ -31,7 +26,6 @@ class ArticleCommandCrudController extends AbstractCrudController
             ->setEntityLabelInPlural('Commandes');
     }
 
-
     public function configureActions(Actions $actions): Actions
     {
         $actions = $this->configureDefaultActions($actions);
@@ -48,7 +42,7 @@ class ArticleCommandCrudController extends AbstractCrudController
     {
         return [
             AssociationField::new('stock', 'Stock'),
-            IntegerField::new('quantity', 'Quantité')
+            IntegerField::new('quantity', 'Quantité'),
         ];
     }
 }
