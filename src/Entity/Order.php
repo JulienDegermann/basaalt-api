@@ -28,8 +28,8 @@ use Symfony\Component\Serializer\Attribute\Groups;
         new Delete(),
         new Put(),
     ],
-    normalizationContext: ['groups' => ['read:orders', 'read:order', 'read:date']],
-    denormalizationContext: ['groups' => ['write:order']],
+    normalizationContext: ['groups' => ['read:orders', 'read:order']],
+    denormalizationContext: ['groups' => ['write:order', 'write:quantity']],
     order: ['createdAt' => 'DESC'],
     paginationEnabled: false,
 )]
@@ -44,21 +44,27 @@ class Order
     #[Groups(['read:orders', 'read:order'])]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'orders')]
+    #[ORM\ManyToOne(inversedBy: 'orders', cascade: ['persist', 'remove'])]
+    #[Groups(['read:orders', 'read:order', 'write:orders', 'write:order'])]
     private ?User $buyer = null;
 
     #[ORM\OneToMany(targetEntity: ArticleCommand::class, mappedBy: 'order', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[Groups(['read:orders', 'read:order', 'write:order'])]
     private Collection $articleCommands;
 
     #[ORM\Column(type: 'string')]
+    #[Groups(['read:orders', 'read:order', 'read:date', 'write:order'])]
     private ?string $status;
 
+    #[Groups(['read:orders', 'read:order', 'read:date'])]
     private ?float $totalPrice = 0;
 
     #[ORM\Column(nullable: true)]
+    #[Groups(['read:orders', 'read:order', 'read:date'])]
     private ?DateTimeImmutable $expectedDeliveryDate;
 
     #[ORM\Column(type: 'string', nullable: true)]
+    #[Groups(['read:orders', 'read:order', 'read:date'])]
     private ?string $deliveryUrl;
 
     public function __construct()

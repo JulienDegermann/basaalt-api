@@ -2,9 +2,9 @@
 
 namespace App\Traits;
 
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Serializer\Attribute\Groups;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 trait SizeTrait
 {
@@ -18,7 +18,7 @@ trait SizeTrait
         new Assert\Regex(
             pattern: '/^(xxs|xs|s|m|l|xl|xxl|xxxl|XXS|XS|S|M|L|XL|XXL|XXXL|TU)$/',
             message: 'La format de la taille est invalide.'
-        )
+        ),
     ])]
     private ?string $size = null;
 
@@ -27,7 +27,7 @@ trait SizeTrait
         return $this->size;
     }
 
-    public function setSize(string $size): static
+    public function setSize(?string $size): static
     {
         $this->size = $size;
 

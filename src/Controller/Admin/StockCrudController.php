@@ -9,10 +9,10 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ColorField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 class StockCrudController extends AbstractCrudController
 {
@@ -42,7 +42,19 @@ class StockCrudController extends AbstractCrudController
         return [
             // AssociationField::new('article', 'Article'),
             AssociationField::new('article', 'Article')->hideOnForm(),
-            TextField::new('size', 'Taille'),
+//            TextField::new('size', 'Taille'),
+            ChoiceField::new('size', 'Taille')
+                ->setChoices([
+                    'TU' => 'TU',
+                    'XXS' => 'XXS',
+                    'XS' => 'XS',
+                    'S' => 'S',
+                    'M' => 'M',
+                    'L' => 'L',
+                    'XL' => 'XL',
+                    'XXL' => 'XXL',
+                    'XXXL' => 'XXXL',
+                ]),
             ColorField::new('color', 'Couleur')->setRequired(false)->setFormTypeOptions(['attr' => ['value' => null]]),
             IntegerField::new('quantity', 'Quantité en stock'),
             CollectionField::new('stockImages', 'Images')

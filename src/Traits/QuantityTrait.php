@@ -11,7 +11,7 @@ use UnexpectedValueException;
 trait QuantityTrait
 {
     #[ORM\Column]
-    #[Groups(['read:quantity'])]
+    #[Groups(['read:quantity', 'write:quantity'])]
     #[Assert\Sequentially([
         new Assert\NotBlank(
             message: 'Ce champ est obligatoire.'

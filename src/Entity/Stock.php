@@ -20,12 +20,11 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: StockRepository::class)]
 #[ApiResource(
     operations: [
-        new Get(normalizationContext: ['groups' => 'stock:item']),
-        new GetCollection(normalizationContext: ['groups' => 'stock:list']),
+        new Get(normalizationContext: ['groups' => 'read:stock']),
+        new GetCollection(normalizationContext: ['groups' => 'read:stocks']),
     ],
     normalizationContext: ['groups' => ['read:stocks', 'read:stock', 'read:articles']],
     denormalizationContext: ['groups' => ['stock:write']],
-    order: ['year' => 'DESC', 'city' => 'ASC'],
     paginationEnabled: false,
 )]
 class Stock
@@ -55,6 +54,7 @@ class Stock
     private Collection $stockImages;
 
     #[ORM\OneToMany(targetEntity: ArticleCommand::class, mappedBy: 'stock', cascade: ['persist'], orphanRemoval: true)]
+    #[Groups(['read:stocks', 'read:stock'])]
     private Collection $articleCommands;
 
     public function __construct()

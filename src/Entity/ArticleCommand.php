@@ -33,10 +33,12 @@ class ArticleCommand
     #[Groups(['read:orders', 'read:order', 'read:date'])]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: "articleCommands")]
+    #[ORM\ManyToOne(targetEntity: Stock::class, inversedBy: "articleCommands", cascade: ['persist'])]
+    #[Groups(['read:orders', 'read:order', 'read:date', 'write:order'])]
     private ?Stock $stock = null;
 
-    #[ORM\ManyToOne(inversedBy: "articleCommands")]
+    #[ORM\ManyToOne(targetEntity: Order::class, inversedBy: "articleCommands")]
+    #[Groups(['read:orders', 'read:order', 'read:date', 'write:order'])]
     private ?Order $order;
 
     public function getId(): ?int

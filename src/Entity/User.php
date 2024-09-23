@@ -46,11 +46,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['read:user', 'read:users', 'read:band', 'read:bands', 'read:messages', 'read:message', 'read:orders', 'read:order'])]
+    #[Groups(['read:user', 'read:users', 'read:band', 'read:bands', 'read:messages', 'read:message', 'write:order'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 180)]
-    #[Groups(['read:user', 'read:band', 'write:message', 'read:message', 'read:messages', 'read:orders', 'read:order'])]
+    #[Groups(['read:user', 'read:band', 'write:message', 'read:message', 'read:messages', 'write:order'])]
     #[Assert\Sequentially([
         new Assert\NotBlank(
             message: 'Email requis'
@@ -99,7 +99,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['read:users', 'read:user', 'read:bands', 'read:band', 'read:messages', 'write:user', 'write:message', 'read:message', 'read:orders', 'read:order'])]
+    #[Groups(['read:users', 'read:user', 'read:bands', 'read:band', 'read:messages', 'write:user', 'write:message', 'read:message', 'write:order'])]
     #[Assert\Sequentially([
         new Assert\NotBlank(
             message: 'Prénom requis'
@@ -122,7 +122,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $firstName = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['read:users', 'read:user', 'read:messages', 'read:message', 'write:message', 'read:orders', 'read:order'])]
+    #[Groups(['read:users', 'read:user', 'read:messages', 'read:message', 'write:message', 'write:order'])]
     #[Assert\Sequentially([
         new Assert\NotBlank(
             message: 'Nom requis'
@@ -145,7 +145,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $lastName = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['read:users', 'read:user', 'read:comments', 'read:comment', 'write:comment'])]
+    #[Groups(['read:users', 'read:user', 'read:comments', 'read:comment', 'write:comment', 'write:order'])]
     #[Assert\Sequentially([
         new Assert\Type(
             type: 'string',
@@ -165,7 +165,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $userName = null;
 
     #[ORM\Column(nullable: true)]
-    #[Groups(['read:user', 'read:bands', 'read:band'])]
+    #[Groups(['read:user', 'read:bands', 'read:band', 'write:order'])]
     #[Assert\Sequentially([
         new Assert\Type(
             type: 'datetimeimmutable',
@@ -214,6 +214,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $comments;
 
     #[ORM\OneToMany(targetEntity: Order::class, mappedBy: 'buyer', cascade: ['remove', 'persist'], orphanRemoval: true)]
+    #[Groups(['read:user'])]
     private Collection $orders;
 
     public function __construct()
