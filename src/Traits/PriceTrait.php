@@ -2,14 +2,14 @@
 
 namespace App\Traits;
 
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Serializer\Attribute\Groups;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 trait PriceTrait
 {
     #[ORM\Column]
-    #[Groups(['read:stock', 'write:order', 'read:price'])]
+    #[Groups(['read:stocks', 'read:stock', 'read:article'])]
     #[Assert\Sequentially([
         new Assert\NotBlank(
             message: 'Ce champ est obligatoire.'
@@ -28,7 +28,7 @@ trait PriceTrait
         new Assert\GreaterThanOrEqual(
             0,
             message: 'Le prix doit être supérieur ou égal à {{ value }}.'
-        )
+        ),
     ])]
     private ?float $price = null;
 

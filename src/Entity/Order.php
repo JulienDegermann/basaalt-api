@@ -29,7 +29,7 @@ use Symfony\Component\Serializer\Attribute\Groups;
         new Put(),
     ],
     normalizationContext: ['groups' => ['read:orders', 'read:order']],
-    denormalizationContext: ['groups' => ['write:order', 'write:quantity']],
+    denormalizationContext: ['groups' => ['write:order']],
     order: ['createdAt' => 'DESC'],
     paginationEnabled: false,
 )]
@@ -44,7 +44,7 @@ class Order
     #[Groups(['read:orders', 'read:order'])]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'orders', cascade: ['persist', 'remove'])]
+    #[ORM\ManyToOne(inversedBy: 'orders', cascade: ['persist'])]
     #[Groups(['read:orders', 'read:order', 'write:orders', 'write:order'])]
     private ?User $buyer = null;
 
@@ -56,7 +56,7 @@ class Order
     #[Groups(['read:orders', 'read:order', 'read:date', 'write:order'])]
     private ?string $status;
 
-    #[Groups(['read:orders', 'read:order', 'read:date'])]
+    #[Groups(['read:orders', 'read:order', 'read:date', 'write:order'])]
     private ?float $totalPrice = 0;
 
     #[ORM\Column(nullable: true)]
@@ -73,7 +73,7 @@ class Order
         $this->updatedAt = new DateTimeImmutable();
         $this->articleCommands = new ArrayCollection();
     }
-
+    
     public function getTotalPrice(): ?float
     {
         $price = 0;
@@ -95,7 +95,7 @@ class Order
             'back',
         ];
         if (!in_array($status, $allowedStatuses)) {
-            throw new InvalidArgumentException('Statut de commande non valide');
+            throw new InvalidArgumentException(sprintf('Statut de commande non valide: %s', $status));
         }
         $this->status = $status;
 
@@ -178,3 +178,4 @@ class Order
         return $this;
     }
 }
+

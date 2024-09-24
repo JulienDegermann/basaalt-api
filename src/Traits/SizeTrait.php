@@ -9,7 +9,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 trait SizeTrait
 {
     #[ORM\Column(nullable: true)]
-    #[Groups(['read:stock', 'read:article', 'write:order'])]
+    #[Groups(['read:stocks', 'read:article', 'read:orders', 'read:order', 'write:order'])]
     #[Assert\Sequentially([
         new Assert\Type(
             type: 'string',

@@ -2,6 +2,9 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\RangeFilter;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
@@ -23,10 +26,12 @@ use Symfony\Component\Validator\Constraints as Assert;
         new Get(normalizationContext: ['groups' => 'read:stock']),
         new GetCollection(normalizationContext: ['groups' => 'read:stocks']),
     ],
-    normalizationContext: ['groups' => ['read:stocks', 'read:stock', 'read:articles']],
+    normalizationContext: ['groups' => ['read:stocks', 'read:stock']],
     denormalizationContext: ['groups' => ['stock:write']],
     paginationEnabled: false,
 )]
+#[ApiFilter(SearchFilter::class, properties: ['article' => 'exact'])]
+#[ApiFilter(RangeFilter::class, properties: ['quantity'])]
 class Stock
 {
     use DateEntityTrait;
@@ -37,12 +42,12 @@ class Stock
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['read:stocks', 'read:stock', 'read:articles', 'read:date'])]
+    #[Groups(['read:stocks', 'read:stock', 'read:articles'])]
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'stocks')]
     #[ORM\JoinColumn(nullable: false)]
-    #[Groups(['read:stocks', 'read:stock', 'write:order'])]
+    #[Groups(['read:stocks', 'read:stock'])]
     #[Assert\Valid]
     private ?Article $article = null;
 

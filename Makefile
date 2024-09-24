@@ -44,6 +44,10 @@ stop:
 	symfony server:stop
 .PHONY: stop
 
+test:
+	php bin/phpunit
+.PHONY: test
+
 restart:
 	make stop
 	make start

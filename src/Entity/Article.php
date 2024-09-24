@@ -20,15 +20,15 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ArticleRepository::class)]
 #[ApiResource(
-    normalizationContext: ['groups' => ['read:articles', 'read:article', 'read:date', 'read:price', 'read:quantity']],
-    denormalizationContext: ['groups' => ['write:article']],
     operations: [
         new Get(),
         new GetCollection(),
         new Post(),
         new Put(),
-        new Delete()
-    ]
+        new Delete(),
+    ],
+    normalizationContext: ['groups' => ['read:articles', 'read:article']],
+    denormalizationContext: ['groups' => ['write:article']]
 )]
 class Article
 {
@@ -43,7 +43,7 @@ class Article
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['read:articles', 'read:article', 'read:categories', 'read:category'])]
+    #[Groups(['read:articles', 'read:article', 'read:categories', 'read:category', 'read:stock', 'read:stocks'])]
     #[Assert\Sequentially([
         new Assert\NotBlank(
             message: 'Ce champ est obligatoire.'
@@ -61,12 +61,12 @@ class Article
         new Assert\Regex(
             pattern: '/^[a-zA-Z0-9\s\-\p{L}]{3,255}$/u',
             message: 'Ce champ contient des caractères non autorisés.'
-        )
+        ),
     ])]
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['read:articles', 'read:article'])]
+    #[Groups(['read:articles', 'read:article', 'read:stocks'])]
     #[Assert\Sequentially([
         new Assert\Type(
             type: 'string',
@@ -81,7 +81,7 @@ class Article
         new Assert\Regex(
             pattern: '/^[a-zA-Z0-9\s\-\(\)\'\".,:x\p{L}]{5,255}$/u',
             message: 'Ce champ contient des caractères non autorisés.'
-        )
+        ),
     ])]
     private ?string $description = null;
 
@@ -91,7 +91,7 @@ class Article
     #[Assert\Valid]
     private ?Category $category = null;
 
-    #[ORM\OneToMany(targetEntity: Stock::class, mappedBy: 'article', orphanRemoval: true, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(targetEntity: Stock::class, mappedBy: 'article', cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[Groups(['read:articles', 'read:article'])]
     #[Assert\Valid]
     private Collection $stocks;
@@ -177,8 +177,8 @@ class Article
     public function __construct()
     {
         $this->stocks = new ArrayCollection();
-        $this->createdAt = new \DateTimeImmutable();
-        $this->updatedAt = new \DateTimeImmutable();
+        $this->createdAt = new DateTimeImmutable();
+        $this->updatedAt = new DateTimeImmutable();
     }
 
     public function __toString(): string
@@ -186,3 +186,4 @@ class Article
         return $this->name;
     }
 }
+

@@ -11,7 +11,7 @@ use UnexpectedValueException;
 trait QuantityTrait
 {
     #[ORM\Column]
-    #[Groups(['read:quantity', 'write:quantity'])]
+    #[Groups(['read:quantity', 'write:order', 'read:stock', 'read:stocks'])]
     #[Assert\Sequentially([
         new Assert\NotBlank(
             message: 'Ce champ est obligatoire.'
@@ -34,9 +34,9 @@ trait QuantityTrait
     ])]
     private ?int $quantity = null;
 
-    public function getQuantity(): ?int
+    public function getQuantity(): int
     {
-        return !$this->quantity ? null : $this->quantity;
+        return $this->quantity;
     }
 
     public function setQuantity(int $quantity): static
