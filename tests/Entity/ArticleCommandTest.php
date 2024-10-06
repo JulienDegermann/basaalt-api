@@ -4,8 +4,8 @@ namespace App\Tests\Entity;
 
 use App\Entity\ArticleCommand;
 use App\Entity\Stock;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
-use UnexpectedValueException;
 
 class ArticleCommandTest extends TestCase
 {
@@ -54,7 +54,7 @@ class ArticleCommandTest extends TestCase
         $stock = new Stock();
         $stock->setQuantity(5);
         $quantity = $stock->getQuantity() + 1;
-        $this->expectException(UnexpectedValueException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->articleCommand->setStock($stock);
         $this->articleCommand->setQuantity($quantity);
     }

@@ -2,19 +2,19 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Metadata\Get;
-use ApiPlatform\Metadata\Put;
-use ApiPlatform\Metadata\Post;
-use App\Traits\DateEntityTrait;
-use ApiPlatform\Metadata\Delete;
-use Doctrine\ORM\Mapping as ORM;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use ApiPlatform\Metadata\Put;
 use App\Repository\StockImagesRepository;
+use App\Traits\DateEntityTrait;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
-use Symfony\Component\HttpFoundation\File\File;
 
 #[Vich\Uploadable]
 #[ORM\Entity(repositoryClass: StockImagesRepository::class)]
@@ -26,13 +26,12 @@ use Symfony\Component\HttpFoundation\File\File;
         new GetCollection(),
         new Post(),
         new Put(),
-        new Delete()
+        new Delete(),
     ],
     order: ['createdAt' => 'DESC'],
     paginationEnabled: false,
 )] class StockImages
 {
-
     use DateEntityTrait;
 
     #[ORM\Id]
@@ -48,11 +47,9 @@ use Symfony\Component\HttpFoundation\File\File;
                 new Assert\Image(
                     maxSize: '5M',
                     maxSizeMessage: 'Image invalide : {{ max }}  maximum',
-                    // 'mimeTypes' => ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'],
                     mimeTypes: ['image/jpeg'],
                     mimeTypesMessage: 'Image invalide : formats acceptés jpeg',
-                    // 'mimeTypesMessage' => 'Image invalide : formats ±acceptés jpeg, jpg, png, gif',
-                )
+                ),
             ]
         )
     ]
@@ -69,8 +66,8 @@ use Symfony\Component\HttpFoundation\File\File;
                     // 'mimeTypes' => ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'],
                     mimeTypes: ['image/jpeg'],
                     mimeTypesMessage: 'Image invalide : formats acceptés jpeg',
-                    // 'mimeTypesMessage' => 'Image invalide : formats ±acceptés jpeg, jpg, png, gif',
-                )
+                // 'mimeTypesMessage' => 'Image invalide : formats ±acceptés jpeg, jpg, png, gif',
+                ),
             ]
         )
     ]

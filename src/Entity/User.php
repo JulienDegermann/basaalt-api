@@ -217,16 +217,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['read:user'])]
     private Collection $orders;
 
-    public function __construct()
-    {
-        $this->messages = new ArrayCollection();
-        $this->comments = new ArrayCollection();
-        $this->createdAt = new DateTimeImmutable();
-        $this->updatedAt = new DateTimeImmutable();
-        $this->orders = new ArrayCollection();
-        $this->roles = ['ROLE_USER'];
-    }
-
     public function getId(): ?int
     {
         return $this->id;
@@ -430,6 +420,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    /**
+     * @return Collection<int, Order>
+     */
+    public function getorders(): Collection
+    {
+        return $this->orders;
+    }
+
+    public function __construct()
+    {
+        $this->messages = new ArrayCollection();
+        $this->comments = new ArrayCollection();
+        $this->createdAt = new DateTimeImmutable();
+        $this->updatedAt = new DateTimeImmutable();
+        $this->orders = new ArrayCollection();
+        $this->roles = ['ROLE_USER'];
+    }
+
     public function __toString(): string
     {
         $value = $this->getFirstName() && $this->getFirstName() !== '' ? $this->getFirstName() : $this->getUserName();
@@ -438,13 +446,5 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return $value;
-    }
-
-    /**
-     * @return Collection<int, Order>
-     */
-    public function getorders(): Collection
-    {
-        return $this->orders;
     }
 }

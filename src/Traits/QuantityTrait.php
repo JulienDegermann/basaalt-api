@@ -4,9 +4,9 @@ namespace App\Traits;
 
 use App\Entity\ArticleCommand;
 use Doctrine\ORM\Mapping as ORM;
+use InvalidArgumentException;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
-use UnexpectedValueException;
 
 trait QuantityTrait
 {
@@ -43,7 +43,7 @@ trait QuantityTrait
     {
         if ($this instanceof ArticleCommand) {
             if ($this->stock && $quantity > $this->stock->getQuantity()) {
-                throw new UnexpectedValueException("La quantité en stock est insuffisante.");
+                throw new InvalidArgumentException("La quantité en stock est insuffisante.");
             }
         }
 

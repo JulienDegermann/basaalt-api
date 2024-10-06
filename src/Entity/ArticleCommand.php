@@ -14,12 +14,12 @@ use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: StockRepository::class)]
 #[ApiResource(
-    normalizationContext: ['groups' => ['read:stocks', 'read:stock', 'read:orders', 'read:order']],
-    denormalizationContext: ['groups' => ['write:orders', 'write:order']],
     operations: [
         new Get(normalizationContext: ['groups' => 'articleCommand:item']),
         new GetCollection(normalizationContext: ['groups' => 'articleCommand:list']),
     ],
+    normalizationContext: ['groups' => ['read:stocks', 'read:stock', 'read:orders', 'read:order']],
+    denormalizationContext: ['groups' => ['write:orders', 'write:order']],
     paginationEnabled: false,
 )]
 class ArticleCommand
@@ -33,7 +33,7 @@ class ArticleCommand
     #[Groups(['read:orders', 'read:order', 'read:date'])]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(targetEntity: Stock::class, inversedBy: "articleCommands", cascade: ['persist'])]
+    #[ORM\ManyToOne(targetEntity: Stock::class, cascade: ['persist'], inversedBy: "articleCommands")]
     #[Groups(['read:orders', 'read:order', 'read:date', 'write:order'])]
     private ?Stock $stock = null;
 

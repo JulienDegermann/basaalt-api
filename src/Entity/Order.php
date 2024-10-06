@@ -73,7 +73,7 @@ class Order
         $this->updatedAt = new DateTimeImmutable();
         $this->articleCommands = new ArrayCollection();
     }
-    
+
     public function getTotalPrice(): ?float
     {
         $price = 0;
@@ -95,7 +95,7 @@ class Order
             'back',
         ];
         if (!in_array($status, $allowedStatuses)) {
-            throw new InvalidArgumentException(sprintf('Statut de commande non valide: %s', $status));
+            throw new InvalidArgumentException('Statut de commande non valide.');
         }
         $this->status = $status;
 
