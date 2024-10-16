@@ -566,7 +566,7 @@
         "symfony/var-exporter": "^5.4 || ^6.2 || ^7.0",
         "symfony/web-profiler-bundle": "^5.4 || ^6.0 || ^7.0",
         "symfony/yaml": "^5.4 || ^6.0 || ^7.0",
-        "twig/twig": "^1.34 || ^2.12 || ^3.0",
+        "twig/twig": "3.11.1",
         "vimeo/psalm": "^5.15"
       },
       "suggest": {
