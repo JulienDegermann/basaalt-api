@@ -3721,7 +3721,7 @@
         "symfony/web-link": "^5.4|^6.0|^7.0",
         "symfony/workflow": "^6.4|^7.0",
         "symfony/yaml": "^5.4|^6.0|^7.0",
-        "twig/twig": "^2.10|^3.0.4"
+        "twig/twig": "3.11.1"
       },
       "type": "symfony-bundle",
       "autoload": {
@@ -3911,7 +3911,7 @@
         "symfony/uid": "^5.4|^6.0|^7.0",
         "symfony/validator": "^6.4|^7.0",
         "symfony/var-exporter": "^6.2|^7.0",
-        "twig/twig": "^2.13|^3.0.4"
+        "twig/twig": "3.11.1"
       },
       "type": "library",
       "autoload": {
@@ -5208,7 +5208,7 @@
         "symfony/twig-bundle": "^5.4|^6.0|^7.0",
         "symfony/validator": "^6.4|^7.0",
         "symfony/yaml": "^5.4|^6.0|^7.0",
-        "twig/twig": "^2.13|^3.0.4",
+        "twig/twig": "3.11.1",
         "web-token/jwt-checker": "^3.1",
         "web-token/jwt-signature-algorithm-ecdsa": "^3.1",
         "web-token/jwt-signature-algorithm-eddsa": "^3.1",
@@ -6021,7 +6021,7 @@
         "php": ">=8.1",
         "symfony/deprecation-contracts": "^2.5|^3",
         "symfony/translation-contracts": "^2.5|^3",
-        "twig/twig": "^2.13|^3.0.4"
+        "twig/twig": "3.11.1"
       },
       "conflict": {
         "phpdocumentor/reflection-docblock": "<3.2.2",
@@ -6134,7 +6134,7 @@
         "symfony/http-foundation": "^5.4|^6.0|^7.0",
         "symfony/http-kernel": "^6.2",
         "symfony/twig-bridge": "^6.4",
-        "twig/twig": "^2.13|^3.0.4"
+        "twig/twig": "3.11.1"
       },
       "conflict": {
         "symfony/framework-bundle": "<5.4",
