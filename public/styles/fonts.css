@@ -1,0 +1,25 @@
+/* FONTS IMPORTS */
+@font-face {
+    font-family: 'Rock Salt';
+    src: url("../fonts/Rock_Salt/RockSalt-Regular.ttf");
+}
+
+@font-face {
+    font-family: 'Plus Jakarta Sans';
+    src: url("../fonts/Plus_Jakarta_Sans/static/PlusJakartaSans-Regular.ttf");
+}
+
+@font-face {
+    font-family: 'Metal Mania';
+    src: url("../fonts/Metal_Mania/MetalMania-Regular.ttf");
+}
+
+@font-face {
+    font-family: 'Englebert';
+    src: url("../fonts/Englebert/Englebert-Regular.ttf");
+}
+
+@font-face {
+    font-family: 'Marhey';
+    src: url("../fonts/Marhey/Marhey-VariableFont_wght.ttf");
+}

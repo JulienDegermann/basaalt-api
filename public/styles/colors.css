@@ -1,0 +1,34 @@
+/* COLORS */
+:root {
+    --LIGHT: #FFF;
+    --DARK: #333333;
+    --PRIMARY: #DAD178;
+    --SUCCESS_LIGHT: lightgreen;
+    --SUCCESS_DARK: darkgreen;
+    --ERROR_LIGHT: lightcoral;
+    --ERROR_DARK: darkred;
+    --WARNING: #FFC107;
+    --GRAY: #999999;
+
+
+    --PRIMARUY: #FFDA22;
+    --DARK: #000f08;
+    --LIGHT: #F6F8FF;
+    --GRAY: #77878B;
+
+    /* gradients */
+
+    --DARK_TO_TRANSPARENT: linear-gradient(180deg, var(--DARK), transparent);
+    --DARK_TO_TRANSPARENT_HEADER: linear-gradient(180deg, var(--DARK) 10%, transparent 100%);
+    --LIGHT_TO_TRANSPARENT: linear-gradient(180deg, var(--LIGHT), transparent);
+    --LIGHT_TO_TRANSPARENT_CIRCLE: radial-gradient(var(--LIGHT) 69%, transparent 70%);
+    --PRIMARY_TO_TRANSPARENT: linear-gradient(0deg, var(--PRIMARY) 30%, transparent 100%);
+
+
+    /* shadows */
+    --INSET_SHADOW_DEFAULT: 0 0 10px 3px var(--LIGHT) inset;
+    --INSET_SHADOW_DEFAULT_HOVER: 0 0 5px 5px var(--DARK) inset;
+    --INSET_SHADOW_HEROBANNER: 0 0 5px 2px var(--LIGHT) inset;
+
+    /* gradients */
+}

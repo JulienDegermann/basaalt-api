@@ -2,29 +2,106 @@
 
 namespace App\Controller;
 
+use App\Entity\User;
+use App\Repository\UserRepository;
+use App\Service\JWTService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class LoginController extends AbstractController
 {
     #[Route('/login', name: 'app_login')]
-    public function login(AuthenticationUtils $authenticationUtils)
+    public function login(AuthenticationUtils $authenticationUtils): Response
     {
-        dd('connexion');
+        $user = $this->getUser();
+        if ($user && $user instanceof User) {
+            dd($user);
 
-        $this->render("login/login.html.twig", []);
+            return $this->redirectToRoute('admin');
+        }
+        // get the login error if there is one
+        $error = $authenticationUtils->getLastAuthenticationError();
+        // last username entered by the user
+        $lastUsername = $authenticationUtils->getLastUsername();
+
+        return $this->render("login/index.html.twig", [
+            'last_username' => $lastUsername,
+            'error' => $error,
+        ]);
+    }
+
+    #[\Symfony\Component\Routing\Annotation\Route('/logout', name: 'app_logout')]
+    public function logout()
+    {
+        throw new LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
     }
 
     #[Route('/mot-de-passe-oublie', name: 'app_forget_password')]
-    public function forgetPassword()
+    public function forgetPassword(
+        Request        $request,
+        UserRepository $repo,
+        JWTService     $jwtService
+    )
     {
-        dd('password forgotten');
+        $email = $request->request->get('_username');
+        $user = $repo->findOneBy(['email' => $email]);
+
+        if ($user && $user instanceof User) {
+            $header = [
+                'alg' => 'HS256',
+                'typ' => 'JWT',
+            ];
+
+            $payload = ['userId' => $user->getId()];
+            $token = $jwtService->generate(
+                $header,
+                $payload,
+                $this->getParameter('app.jwtsecret')
+            );
+
+            if ($token) {
+                return $this->redirectToRoute('app_password_reset', ['token' => $token]);
+            }
+        }
+
+        return $this->render('login/password_forgotten.html.twig');
     }
 
-    #[Route('/mot-de-passe-oublié/{token}', name: 'app_password_reset')]
-    public function resetPassword()
+    #[Route('/modifier-le-mot-de-passe?token={token}', name: 'app_password_reset')]
+    public function resetPassword(
+        $token,
+        Request $request,
+        JWTService $jwtService,
+        UserRepository $repo,
+        UserPasswordHasherInterface $hasher,
+        EntityManagerInterface $em
+    )
     {
-        dd('password reset');
+        if ($jwtService->isExpired($token)) {
+            $this->addFlash('warning', 'Lien non expiré.');
+
+            return $this->redirectToRoute('app_forget_password');
+        }
+        $user = $repo->findOneBy(['id' => $jwtService->getPayload($token)['userId']]);
+
+        if ($request && $request->isMethod('POST') && $request instanceof Request) {
+            $newPassword = $request->request->get('password');
+
+            if ($newPassword) {
+                $hashed = $hasher->hashPassword($user, $newPassword);
+                $user->setPassword($hashed);
+                $em->persist($user);
+                $em->flush();
+
+                return $this->redirectToRoute('app_login');
+            }
+        }
+
+        return $this->render('login/password_reset.html.twig', ['token' => $token]);
     }
 }
