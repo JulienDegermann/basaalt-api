@@ -27,7 +27,9 @@ class DashboardController extends AbstractDashboardController
     #[Route('/admin', name: 'admin')]
     public function index(): Response
     {
-        $this->user = new User();
+        if (!$this->isGranted("ROLE_ADMIN") && !$this->isGranted("ROLE_SUPER_ADMIN")) {
+            return $this->redirectToRoute('app_login');
+        }
 
         return $this->render('admin/dashboard.html.twig');
     }

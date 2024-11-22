@@ -14,7 +14,8 @@ class LiveFixtures extends Fixture
     {
       $cityRepo = $manager->getRepository(City::class);     
 
-      $cities = $cityRepo->findAll();
+      // $cities = $cityRepo->findAll();
+      $city = $cityRepo->find(1);
 
 
         $lives = [
@@ -43,7 +44,8 @@ class LiveFixtures extends Fixture
         foreach($lives as $key => $live){
             $current = new Live();
             $current->setEventDate($live["enventDate"]);
-            $current->setCity($cities[array_rand($cities)]); // random city
+            // $current->setCity($cities[array_rand($cities)]); // random city
+            $current->setCity($city);
             $current->setEventName($live["eventName"]);
             $current->setAddress($live["address"]);
 

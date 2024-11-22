@@ -11,7 +11,7 @@ class HomeController extends AbstractController
     #[Route(
         ['/{url}', '/{url}/{id}'],
         name: 'app_home',
-        requirements: ['url' => '(?!admin)(?!api)(?!login)(?!mot-de-passe-oublie)(?!uploads).*'],
+        requirements: ['url' => '(?!admin)(?!api)(?!login)(?!mot-de-passe-oublie)(?!modifier-le-mot-de-passe)(?!uploads).*'],
         defaults: ['url' => '', 'id' => '']
     )]
     public function index(): Response

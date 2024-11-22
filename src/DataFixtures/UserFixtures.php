@@ -5,10 +5,16 @@ namespace App\DataFixtures;
 use App\Entity\User;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
-
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserFixtures extends Fixture
 {
+
+  public function __construct(
+    private readonly UserPasswordHasherInterface $hasher
+  ) {
+  }
+
   public function load(ObjectManager $manager): void
   {
 
@@ -71,7 +77,7 @@ class UserFixtures extends Fixture
       ->setUserName('SuperAdmin')
       ->setEmail('admin@admin.com')
       ->setRoles(['ROLE_SUPER_ADMIN', 'ROLE_ADMIN', 'ROLE_USER'])
-      ->setPassword('monMotDePasse123!')
+      ->setPassword($this->hasher->hashPassword($superAdmin, 'monMotDePasse123!'))
       ->setFirstName('Super')
       ->setLastName('Admin')
       ->setBirthDate(new \DateTimeImmutable('1988-10-18'));

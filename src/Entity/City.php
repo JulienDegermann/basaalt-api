@@ -8,15 +8,20 @@ use App\Repository\CityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Mime\Address;
 use Symfony\Component\Serializer\Attribute\Groups;
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
+
 
 #[ORM\Entity(repositoryClass: CityRepository::class)]
 #[ApiResource(
     operations: [
         new GetCollection(normalizationContext: ['groups' => ['read:cities']]),
     ],
+    paginationEnabled: true,
+    paginationItemsPerPage: 10
 )]
+#[ApiFilter(SearchFilter::class, properties: ['name' => 'partial', 'zipCode' => 'partial'])]
 class City
 {
     #[ORM\Id]
@@ -24,47 +29,57 @@ class City
     #[ORM\Column]
     #[Groups(['read:cities', 'read:lives', 'read:live'])]
     private ?int $id = null;
+
     #[ORM\Column(length: 255)]
     #[Groups(['read:cities', 'read:lives', 'read:live'])]
     private ?string $name = null;
+
     #[ORM\Column(length: 255)]
     #[Groups(['read:cities', 'read:lives', 'read:live'])]
     private ?string $zipCode = null;
+
     #[ORM\Column(length: 255)]
     private ?string $inseeCode = null;
+
     #[ORM\OneToMany(targetEntity: Live::class, mappedBy: 'city')]
-    private Collection $lives;
-    #[ORM\OneToMany(targetEntity: Live::class, mappedBy: 'city')]
-    private Collection $addresses;
+    private Collection $liveCities;
 
-    public function addAddress(Address $address): static
-    {
-        $this->addresses->add($address);
-        if (!$address->getCity()) {
-            $address->setCity($this);
-        }
+    #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'city')]
+    private Collection $userCities;
 
-        return $this;
-    }
+    #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'city')]
+    private Collection $deliveryCities;
 
-    public function removeAddress(Address $address): static
-    {
-        if ($this->addresses->removeElement($address)) {
-            $address->setCity(null);
-        };
 
-        return $this;
-    }
+    // public function addAddress(Address $address): static
+    // {
+    //     $this->addresses->add($address);
+    //     if (!$address->getCity()) {
+    //         $address->setCity($this);
+    //     }
+
+    //     return $this;
+    // }
+
+    // public function removeAddress(Address $address): static
+    // {
+    //     if ($this->addresses->removeElement($address)) {
+    //         $address->setCity(null);
+    //     };
+
+    //     return $this;
+    // }
 
     public function __construct()
     {
-        $this->lives = new ArrayCollection();
-        $this->addresses = new ArrayCollection();
+        $this->liveCities = new ArrayCollection();
+        $this->userCities = new ArrayCollection();
+        $this->deliveryCities = new ArrayCollection();
     }
 
     public function getAdresses(): Collection
     {
-        return $this->addresses;
+        return $this->userCities;
     }
 
     public function getId(): ?int
@@ -111,27 +126,27 @@ class City
     /**
      * @return Collection<int, Live>
      */
-    public function getLives(): Collection
+    public function getLiveCities(): Collection
     {
-        return $this->lives;
+        return $this->liveCities;
     }
 
-    public function addLife(Live $life): static
+    public function addLiveCity(Live $live): static
     {
-        if (!$this->lives->contains($life)) {
-            $this->lives->add($life);
-            $life->setCity($this);
+        if (!$this->liveCities->contains($live)) {
+            $this->liveCities->add($live);
+            $live->setCity($this);
         }
 
         return $this;
     }
 
-    public function removeLife(Live $life): static
+    public function removeLive(Live $live): static
     {
-        if ($this->lives->removeElement($life)) {
+        if ($this->liveCities->removeElement($live)) {
             // set the owning side to null (unless already changed)
-            if ($life->getCity() === $this) {
-                $life->setCity(null);
+            if ($live->getCity() === $this) {
+                $live->setCity(null);
             }
         }
 

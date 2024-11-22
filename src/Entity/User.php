@@ -24,17 +24,18 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
-#[ApiResource(
-    operations: [
-        new Get(),
-        new GetCollection(),
-        new Post(),
-        new Put(),
-        new Delete(),
-    ],
-    normalizationContext: ['groups' => ['read:user', 'read:users', 'read:date']],
-    denormalizationContext: ['groups' => ['write:user', 'write:message']],
-)
+#[
+    ApiResource(
+        operations: [
+            new Get(),
+            new GetCollection(),
+            new Post(),
+            new Put(),
+            new Delete(),
+        ],
+        normalizationContext: ['groups' => ['read:user', 'read:users', 'read:date']],
+        denormalizationContext: ['groups' => ['write:user', 'write:message']],
+    )
 ]
 #[ApiFilter(SearchFilter::class, properties: ['email' => 'exact'])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
@@ -216,6 +217,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Order::class, mappedBy: 'buyer', cascade: ['remove', 'persist'], orphanRemoval: true)]
     #[Groups(['read:user'])]
     private Collection $orders;
+
+    #[ORM\ManyToOne(targetEntity: City::class, inversedBy: 'userCities')]
+    private ?City $city;
+
+
 
     public function getId(): ?int
     {
@@ -426,6 +432,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getorders(): Collection
     {
         return $this->orders;
+    }
+
+
+    public function getCity(): ?City
+    {
+        return $this->city;
+    }
+
+    public function setCity(?City $city): static
+    {
+        $this->city = $city;
+
+        return $this;
     }
 
     public function __construct()

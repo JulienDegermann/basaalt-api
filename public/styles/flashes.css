@@ -1,0 +1,57 @@
+.flashContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  max-width: 1000px;
+  margin: auto;
+  padding: 1rem;
+
+  .danger,
+  .success {
+    padding: 0.5rem 1rem;
+    margin: 1rem 0;
+    border-radius: 5px;
+    width: 100%;
+    position: relative;
+    padding-right: 3rem;
+    display: inline-flex;
+    align-items: center;
+
+    .close {
+      position: absolute;
+      right: -.75rem;
+      cursor: pointer;
+      width: 25px;
+      height: 25px;
+      text-align: center;
+      line-height: 20px;
+      border-radius: 50%;
+      padding: 5px;
+      text-transform: none;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      background: none;
+      border: 1px solid;
+      font-size: .75rem;
+    }
+  }
+  .danger {
+    background: var(--ERROR_LIGHT);
+    color: var(--ERROR_DARK);
+    border: 1px solid var(--ERROR_DARK);
+    .close {
+      border-color: var(--ERROR_DARK);
+      color: var(--ERROR_DARK);
+    }
+  }
+  .success {
+    background: var(--SUCCESS_LIGHT);
+    color: var(--SUCCESS_DARK);
+    border: 1px solid var(--SUCCESS_DARK);
+    .close {
+      border-color: var(--SUCCESS_DARK);
+      color: var(--SUCCESS_DARK);
+    }
+  }
+}

@@ -32,7 +32,8 @@ class PlateformCrudController extends AbstractCrudController
         $actions
             ->remove(Crud::PAGE_DETAIL, 'delete')
             ->setPermission('new', 'ROLE_ADMIN')
-            ->remove(Crud::PAGE_INDEX, 'delete');
+            ->remove(Crud::PAGE_INDEX, 'delete')
+            ->remove(Crud::PAGE_INDEX, 'new');
 
             return $actions;
     }

@@ -41,7 +41,6 @@ class ArticleCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
-            // IdField::new('id'),
             TextField::new('name', 'Nom de l\'article'),
             TextareaField::new('description', 'Description'),
             AssociationField::new('category', 'Catégorie'),
