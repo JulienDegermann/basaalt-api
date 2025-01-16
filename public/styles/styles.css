@@ -1,0 +1,51 @@
+@import './fonts.css';
+@import './colors.css';
+@import './button.css';
+@import './form.css';
+@import './flashes.css';
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: var(--DARK);
+    color: var(--LIGHT);
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+    display: inline-block;
+    width: max-content;
+
+    &:hover {
+        color: var(--PRIMARY);
+    }
+}
+
+section {
+    padding: 1rem;
+    width: 100%;
+}
+
+section .container {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+section .sectionTitle {
+    border-bottom: 1px solid var(--LIGHT);
+    font-size: 2rem;
+    margin-bottom: 3rem;
+    font-family: Marhey; /* not working */
+}
+

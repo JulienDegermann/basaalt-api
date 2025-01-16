@@ -1,5 +1,6 @@
 {% extends 'base.html.twig' %}
 {% block main %}
+<<<<<<< HEAD
     <h2>Connexion</h2>
 
     <form method="post" action="{{ path('app_login') }}">
@@ -19,4 +20,35 @@
         <button type="submit">Me connecter</button>
         <a href={{ path('app_forget_password') }}>Mot de passe oublié ?</a>
     </form>
+=======
+
+    <section>
+        <h2 class="sectionTitle">Connexion</h2>
+        <div class="container">
+            <form method="post" action="{{ path('app_login') }}">
+                {% if error %}
+                    <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                {% endif %}
+
+                <div class="formInput">
+                    <label for="username">E-mail :</label>
+                    <input type="text" name="_username" id="username" value="{{ last_username }}" required/>
+                </div>
+                <div class="formInput">
+                    <label for="password">Mot de passe :</label>
+                    <input type="password" name="_password" id="password"/>
+                </div>
+                <div class="buttons">
+                    <button class='CTA' type="submit">Me connecter</button>
+                    <a href={{ path('app_forget_password') }}>Mot de passe oublié ?</a>
+                </div>
+
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+
+            </form>
+
+        </div>
+    </section>
+>>>>>>> develop
 {% endblock %}

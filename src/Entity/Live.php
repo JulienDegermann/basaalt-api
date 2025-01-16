@@ -11,6 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Repository\LiveRepository;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
+use App\Traits\AddressTrait;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -34,6 +35,7 @@ class Live
 {
     // createdAt and updatedAt properties, getters and setters
     use DateEntityTrait;
+    use AddressTrait;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -81,25 +83,25 @@ class Live
     ])]
     private ?\DateTimeImmutable $eventDate = null;
 
-    #[ORM\Column(length: 255)]
-    #[Groups(['read:live', 'read:lives', 'write:live'])]
-    #[Assert\Sequentially([
-        new Assert\Type(
-            type: 'string',
-            message: 'Ce champ doit être une chaîne de caractères.'
-        ),
-        new Assert\Length(
-            min: 5,
-            max: 255,
-            minMessage: 'Ce champ doit contenir au moins {{ limit }} caractères.',
-            maxMessage: 'Ce champ ne peut dépasser {{ limit }} caractères.'
-        ),
-        new Assert\Regex(
-            pattern: '/^[a-zA-Z0-9\s\-\p{L}]{5,255}$/u',
-            message: 'Ce champ contient des caractères non autorisés.'
-        )
-    ])]
-    private ?string $address = null;
+    // #[ORM\Column(length: 255)]
+    // #[Groups(['read:live', 'read:lives', 'write:live'])]
+    // #[Assert\Sequentially([
+    //     new Assert\Type(
+    //         type: 'string',
+    //         message: 'Ce champ doit être une chaîne de caractères.'
+    //     ),
+    //     new Assert\Length(
+    //         min: 5,
+    //         max: 255,
+    //         minMessage: 'Ce champ doit contenir au moins {{ limit }} caractères.',
+    //         maxMessage: 'Ce champ ne peut dépasser {{ limit }} caractères.'
+    //     ),
+    //     new Assert\Regex(
+    //         pattern: '/^[a-zA-Z0-9\s\-\p{L}]{5,255}$/u',
+    //         message: 'Ce champ contient des caractères non autorisés.'
+    //     )
+    // ])]
+    // private ?string $address = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['read:live', 'read:lives', 'write:live'])]
@@ -121,7 +123,7 @@ class Live
     ])]
     private ?string $url = null;
 
-    #[ORM\ManyToOne(inversedBy: 'lives')]
+    #[ORM\ManyToOne(inversedBy: 'liveCities')]
     #[Groups(['read:live', 'read:lives'])]
     #[Assert\Sequentially([
         new Assert\Type(
@@ -176,17 +178,17 @@ class Live
         return $this;
     }
 
-    public function getAddress(): ?string
-    {
-        return $this->address;
-    }
+    // public function getAddress(): ?string
+    // {
+    //     return $this->address;
+    // }
 
-    public function setAddress(string $address): static
-    {
-        $this->address = $address;
+    // public function setAddress(string $address): static
+    // {
+    //     $this->address = $address;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 
 
     public function getUrl(): ?string

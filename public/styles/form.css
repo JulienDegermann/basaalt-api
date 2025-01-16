@@ -1,0 +1,38 @@
+section .container form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex-wrap: nowrap;
+}
+
+section .container form > .formInput {
+    width: 100%;
+
+    label, input {
+        width: 100%;
+        margin: 1rem 0;
+    }
+
+    input {
+        border: 1px solid var(--DARK);
+        padding: 1rem;
+        border-radius: 5px;
+
+        &:focus {
+            box-shadow: 0 0px 4px 4px var(--PRIMARY);
+            border-color: var(--PRIMARY);
+            outline: none;
+        }
+    }
+
+    label {
+        margin-top: 1.5rem;
+        font-weight: bold;
+        text-transform: uppercase;
+        margin-right: 1rem;
+    }
+
+    .buttons {
+        display: flex;
+    }
+}

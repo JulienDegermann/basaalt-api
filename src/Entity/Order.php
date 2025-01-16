@@ -66,6 +66,10 @@ class Order
     #[ORM\Column(type: 'string', nullable: true)]
     #[Groups(['read:orders', 'read:order', 'read:date'])]
     private ?string $deliveryUrl;
+    
+    #[ORM\ManyToOne(targetEntity: City::class, inversedBy: 'deliveryCity')]
+    #[Groups(['read:orders', 'read:order', 'write:order'])]
+    private ?City $city;
 
     public function __construct()
     {
@@ -177,5 +181,16 @@ class Order
 
         return $this;
     }
-}
 
+    public function getCity(): ?City
+    {
+        return $this->city;
+    }
+
+    public function setCity(?City $city): static
+    {
+        $this->city = $city;
+
+        return $this;
+    }
+}

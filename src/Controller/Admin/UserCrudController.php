@@ -42,13 +42,12 @@ class UserCrudController extends AbstractCrudController
             TextField::new('lastName', 'Nom'),
             TextField::new('userName', 'Nom d\'utilisateur'),
             TextField::new('email', 'Email'),
-            TextField::new('bandRole', 'Rôle dans le groupe')->hideOnIndex(),
-            TextField::new('password', 'Mot de passe')->hideOnIndex()->hideOnDetail(),
             DateTimeField::new('createdAt', 'Date de création')->onlyOnIndex(),
             DateTimeField::new('updatedAt', 'Date de modification')->onlyOnIndex(),
-            DateTimeField::new('birthDate', 'Date de naissance')->hideOnIndex(),
+            // DateTimeField::new('birthDate', 'Date de naissance')->hideOnIndex(),
             TextField::new('address', 'Adresse')->hideOnIndex(),
-            AssociationField::new('city', 'Ville'),
+            AssociationField::new('city', 'Ville')
+                ->hideOnIndex(),
             ChoiceField::new('roles', 'Rôles')
                 ->setChoices([
                     'Visiteur' => 'ROLE_USER',
