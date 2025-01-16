@@ -21,7 +21,7 @@ use ApiPlatform\Metadata\ApiFilter;
     paginationEnabled: true,
     paginationItemsPerPage: 10
 )]
-#[ApiFilter(SearchFilter::class, properties: ['name' => 'partial', 'zipCode' => 'partial'])]
+#[ApiFilter(SearchFilter::class, properties: ['name' => 'partial', 'zipCode' => 'partial', 'id' => 'exact'])]
 class City
 {
     #[ORM\Id]
