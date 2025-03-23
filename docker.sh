@@ -1,5 +1,6 @@
 #!/bin/bash
 
+composer install
 composer update
 npm install --force && npm run build
 # npm run build

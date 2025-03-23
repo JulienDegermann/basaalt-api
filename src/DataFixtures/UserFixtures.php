@@ -12,8 +12,7 @@ class UserFixtures extends Fixture
 
   public function __construct(
     private readonly UserPasswordHasherInterface $hasher
-  ) {
-  }
+  ) {}
 
   public function load(ObjectManager $manager): void
   {
@@ -71,52 +70,52 @@ class UserFixtures extends Fixture
       }
     }
 
+    // // add SuperAdmin
+    // $superAdmin = new User();
+    // $superAdmin
+    //   ->setUserName('SuperAdmin')
+    //   ->setEmail('admin@admin.com')
+    //   ->setRoles(['ROLE_SUPER_ADMIN', 'ROLE_ADMIN', 'ROLE_USER'])
+    //   ->setPassword($this->hasher->hashPassword($superAdmin, 'monMotDePasse123!'))
+    //   ->setFirstName('Super')
+    //   ->setLastName('Admin')
+    //   ->setBirthDate(new \DateTimeImmutable('1988-10-18'));
+    // $manager->persist($superAdmin);
+
+    // foreach ($users as $key => $userArray) {
+    //   foreach ($userArray as $userKey => $user) {
+    //     $current = new User();
+    //     if ($key === 'comments') {
+    //       $current->setUserName($user['userName']);
+    //       $current->setEmail($user['email']);
+    //     } else {
+    //       $current->setFirstName($user['firstName']);
+    //       $current->setLastName($user['lastName']);
+    //       $current->setEmail($user['firstName'] . '@example.com');
+    //     }
+    //     if ($key === 'comments') {
+    //       $this->addReference('commentUser' . $userKey, $current);
+    //     } else {
+    //       $this->addReference('user' . $userKey, $current);
+    //     }
+    //     $manager->persist($current);
+    //   }
+    // }
+
     // add SuperAdmin
     $superAdmin = new User();
+
+    $password = $this->hasher->hashPassword($superAdmin, 'monMotDePasse123!');
     $superAdmin
       ->setUserName('SuperAdmin')
       ->setEmail('admin@admin.com')
       ->setRoles(['ROLE_SUPER_ADMIN', 'ROLE_ADMIN', 'ROLE_USER'])
-      ->setPassword($this->hasher->hashPassword($superAdmin, 'monMotDePasse123!'))
+      ->setPassword($password)
       ->setFirstName('Super')
       ->setLastName('Admin')
       ->setBirthDate(new \DateTimeImmutable('1988-10-18'));
     $manager->persist($superAdmin);
 
-        foreach ($users as $key => $userArray) {
-            foreach ($userArray as $userKey => $user) {
-                $current = new User();
-                if ($key === 'comments') {
-                    $current->setUserName($user['userName']);
-                    $current->setEmail($user['email']);
-                } else {
-                    $current->setFirstName($user['firstName']);
-                    $current->setLastName($user['lastName']);
-                    $current->setEmail($user['firstName'] . '@example.com');
-                }
-                if ($key === 'comments') {
-                    $this->addReference('commentUser' . $userKey, $current);
-                } else {
-                    $this->addReference('user' . $userKey, $current);
-                }
-                $manager->persist($current);
-            }
-        }
-
-        // add SuperAdmin
-        $superAdmin = new User();
-
-        $password = $this->hasher->hashPassword($superAdmin, 'monMotDePasse123!');
-        $superAdmin
-            ->setUserName('SuperAdmin')
-            ->setEmail('admin@admin.com')
-            ->setRoles(['ROLE_SUPER_ADMIN', 'ROLE_ADMIN', 'ROLE_USER'])
-            ->setPassword($password)
-            ->setFirstName('Super')
-            ->setLastName('Admin')
-            ->setBirthDate(new \DateTimeImmutable('1988-10-18'));
-        $manager->persist($superAdmin);
-
-        $manager->flush();
-    }
+    $manager->flush();
+  }
 }
