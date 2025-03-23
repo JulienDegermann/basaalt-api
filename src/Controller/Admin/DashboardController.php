@@ -27,12 +27,7 @@ class DashboardController extends AbstractDashboardController
     #[Route('/admin', name: 'admin')]
     public function index(): Response
     {
-<<<<<<< HEAD
-//        dd($this->getUser());
-        if (!$this->isGranted('ROLE_SUPER_ADMIN') && !$this->isGranted(['ROLE_ADMIN'])) {
-=======
         if (!$this->isGranted("ROLE_ADMIN") && !$this->isGranted("ROLE_SUPER_ADMIN")) {
->>>>>>> develop
             return $this->redirectToRoute('app_login');
         }
 

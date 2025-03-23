@@ -255,11 +255,7 @@
         ]
     },
     "twig/extra-bundle": {
-<<<<<<< HEAD
-        "version": "v3.13.0"
-=======
         "version": "v3.20.0"
->>>>>>> develop
     },
     "vich/uploader-bundle": {
         "version": "2.4",

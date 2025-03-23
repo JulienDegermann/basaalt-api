@@ -3,53 +3,12 @@
 namespace App\DataFixtures;
 
 use App\Entity\User;
-use Doctrine\Bundle\FixturesBundle\Fixture;
-<<<<<<< HEAD
 use Doctrine\Persistence\ObjectManager;
-=======
->>>>>>> develop
+use Doctrine\Bundle\FixturesBundle\Fixture;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserFixtures extends Fixture
 {
-<<<<<<< HEAD
-    public function __construct(private UserPasswordHasherInterface $hasher)
-    {
-    }
-
-    public function load(ObjectManager $manager): void
-    {
-        $users = [
-            'comments' => [
-                [
-                    'userName' => "John",
-                    'email' => "john@example.com",
-                ],
-                [
-                    'userName' => "Mary",
-                    'email' => "mary@example.com",
-                ],
-                [
-                    'userName' => "Ash",
-                    'email' => "ahs@example.com",
-                ],
-            ],
-            'any' => [
-                [
-                    'firstName' => 'Jack',
-                    'lastName' => 'Doe',
-                ],
-                [
-                    'firstName' => 'Julien',
-                    'lastName' => 'Degermann',
-                ],
-                [
-                    'firstName' => 'Jean',
-                    'lastName' => 'Marie',
-                ],
-            ],
-        ];
-=======
 
   public function __construct(
     private readonly UserPasswordHasherInterface $hasher
@@ -123,7 +82,6 @@ class UserFixtures extends Fixture
       ->setLastName('Admin')
       ->setBirthDate(new \DateTimeImmutable('1988-10-18'));
     $manager->persist($superAdmin);
->>>>>>> develop
 
         foreach ($users as $key => $userArray) {
             foreach ($userArray as $userKey => $user) {

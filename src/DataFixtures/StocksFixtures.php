@@ -10,7 +10,7 @@ use Doctrine\Persistence\ObjectManager;
 
 class StocksFixtures extends Fixture
 {
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $stocks = [
             'Vêtements' => [
