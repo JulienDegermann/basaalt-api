@@ -1,32 +1,54 @@
-FROM php:8.2-fpm-alpine
+FROM php:8.3-apache-bookworm
 
-RUN echo "Message de débogage"
 
-# Installation des dépendances nécessaires
-RUN apk update && \
-    apk add --no-cache \
-    git \
-    unzip \
+RUN docker-php-ext-install pdo_mysql
+
+RUN apt-get update && apt-get install -y \
+    libicu-dev \
+    && openssl \
+    && a2enmod ssl\
+    && docker-php-ext-configure intl \
+    && docker-php-ext-install intl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Installer l'extension zip
+RUN apt-get update && apt-get install -y \
     libzip-dev \
-    zlib-dev \
-    icu-dev \
-    && docker-php-ext-install zip pdo_mysql mysqli pdo pdo_mysql
+    unzip \
+    && docker-php-ext-install zip \
+    && rm -rf /var/lib/apt/lists/*
 
-# Installation de Composer
+# install nodejs & npm
+RUN apt-get update && apt-get install -y \
+    nodejs \
+    npm \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Installation de Symfony CLI 
-RUN curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.alpine.sh' | sh && apk add symfony-cli
+# Symfony CLI 
+RUN curl -sS https://get.symfony.com/cli/installer | bash \
+    && mv /root/.symfony*/bin/symfony /usr/local/bin/symfony
 
-# Définition du répertoire de travail
-WORKDIR /var/www/html
+RUN a2enmod rewrite
 
-# Copie des fichiers de l'application Symfony dans le conteneur
+COPY ./docker.sh /var/opt/docker.sh
 COPY . /var/www/html
 
+# Donner les bonnes permissions et propriétaires
+RUN find /var/www/html -path /var/www/html/.git -prune -o -exec chmod 755 {} \;
+RUN find /var/www/html -path /var/www/html/.git -prune -o -exec chown www-data:www-data {} \;
+RUN chmod -R 755 /var/www/html/public && chown -R www-data:www-data /var/www/html/public
 
-# Installation des dépendances Symfony
-RUN composer install --no-scripts --no-autoloader
+COPY ./apache.conf /etc/apache2/sites-available/000-default.conf
 
-# Exposition du port 80
+
+RUN chmod +x /var/opt/docker.sh
+ENTRYPOINT ["/var/opt/docker.sh"]
+
+WORKDIR /var/www/html
+
 EXPOSE 80
+

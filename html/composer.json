@@ -1,0 +1,5 @@
+{
+    "require": {
+        "doctrine/doctrine-fixtures-bundle": "^4.0"
+    }
+}

@@ -3,6 +3,7 @@
 namespace App\DataFixtures;
 
 use App\Entity\Song;
+use App\Entity\Album;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -28,14 +29,14 @@ class SongFixtures extends Fixture implements DependentFixtureInterface
             $current = new Song();
             $current->setTitle($key);
             $current->setReleasedAt($song['releasedAt']);
-            $current->setAlbum($this->getReference("Album #" . rand(1, 4)));
+            $current->setAlbum($this->getReference("Album #" . rand(1, 4), Album::class));
             $manager->persist($current);
         }
 
         $manager->flush();
     }
 
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             AlbumFixtures::class,

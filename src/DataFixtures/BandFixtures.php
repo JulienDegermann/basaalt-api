@@ -53,7 +53,7 @@ class BandFixtures extends Fixture
     $band->setName("Basaalt");
     $band->setGenre("Groove métal alternatif");
     for ($i = 0; $i < 4; $i++) {
-      $band->addBandMember($this->getReference("bandMember" . $i));
+      $band->addBandMember($this->getReference("bandMember" . $i, User::class));
     }
     $manager->persist($band);
     $this->addReference('band', $band);

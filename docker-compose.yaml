@@ -1,42 +1,53 @@
-version: "3"
-
 services:
-  php: 
-    image: php:8.2-fpm-alpine
-    container_name: php
-    volumes:
-      - ./:/var/www
-    networks:
-      - symfony_app
-    build:
-      context: .
-      dockerfile: DockerFile
-  
-  apache:
-    image: httpd
-    container_name: apache
-    volumes:
-      - ./public:/etc/apache2/sites-enabled
-    networks:
-      - symfony_app
-    ports:
-      - "8000:80"
+    php:
+        image: basaalt_server
+        container_name: basaalt-php
+        volumes:
+            - .:/var/www/html
+        networks:
+            - symfony_app
+        build:
+            context: .
+            dockerfile: Dockerfile
+        ports:
+            - "8082:80"
+        depends_on:
+            db:
+                condition: service_healthy
+                restart: true
+    db:
+        container_name: basaalt_database
+        image: mysql
+        volumes:
+            - mysql_data:/var/lib/mysql:rw
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_DATABASE: basaalt
+            MYSQL_USER: admin
+            MYSQL_PASSWORD: admin
+            # DATABASE_URL: mysql://admin:admin@db:3306/basaalt
+        healthcheck:
+            test: ["CMD-SHELL", "mysql -u root -proot -e 'SELECT 1'"]
+            interval: 10s
+            retries: 5
+            start_period: 10s
+            timeout: 10s
+        ports:
+            - "3307:3306"
+        networks:
+            - symfony_app
+    mailhog:
+        image: mailhog/mailhog
+        container_name: hr-mailhog
+        ports:
+            - "1025:1025"
+            - "8025:8025"
+        environment:
+            MH_STORAGE: memory
 
-  db:
-    container_name: database
-    image: mysql
-    volumes:
-      - ./docker/mysql:/var/lib/mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: basaalt
-      MYSQL_USER: root
-      MYSQL_PASSWORD: E11a072f!
-    
 volumes:
-  db:
-  
-networks:
-  symfony_app:
+    mysql_data:
 
-    
+networks:
+    symfony_app:
+        driver: bridge

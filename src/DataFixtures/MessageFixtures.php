@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\User;
 use App\Entity\Message;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -19,14 +20,14 @@ class MessageFixtures extends Fixture implements DependentFixtureInterface
 
     foreach ($messages as $key => $message) {
       $current = new Message();
-      $current->setAuthor($this->getReference('user' . rand(0, 2)));
+      $current->setAuthor($this->getReference('user' . rand(0, 2), User::class));
       $current->setText($message);
       $manager->persist($current);
     }
     $manager->flush();
   }
 
-  public function getDependencies()
+  public function getDependencies(): array
   {
     return [
       UserFixtures::class,

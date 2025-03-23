@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Band;
 use App\Entity\Album;
 use App\DataFixtures\PlateformFixtures;
 use Doctrine\Persistence\ObjectManager;
@@ -23,7 +24,7 @@ class AlbumFixtures extends Fixture implements DependentFixtureInterface
             $current = new Album();
             $current->setTitle($key);
             $current->setReleasedAt($album['releasedAt']);
-            $current->setBand($this->getReference('band'));
+            $current->setBand($this->getReference('band', Band::class));
             $manager->persist($current);
             $this->addReference($key, $current);
         }
@@ -32,7 +33,7 @@ class AlbumFixtures extends Fixture implements DependentFixtureInterface
     }
 
 
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             PlateformFixtures::class,
