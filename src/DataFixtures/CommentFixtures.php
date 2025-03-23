@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\User;
 use App\Entity\Comment;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -19,14 +20,14 @@ class CommentFixtures extends Fixture implements DependentFixtureInterface
 
     foreach ($comments as $key => $comment) {
       $current = new Comment();
-      $current->setAuthor($this->getReference('commentUser' . rand(0, 2)));
+      $current->setAuthor($this->getReference('commentUser' . rand(0, 2), User::class));
       $current->setText($comment);
       $manager->persist($current);
     }
     $manager->flush();
   }
 
-  public function getDependencies()
+  public function getDependencies(): array
   {
     return [
       UserFixtures::class,
