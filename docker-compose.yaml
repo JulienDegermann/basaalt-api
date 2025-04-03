@@ -2,6 +2,7 @@ services:
     php:
         image: basaalt_server
         container_name: basaalt-php
+        restart: always
         volumes:
             - .:/var/www/html
         networks:
@@ -18,6 +19,7 @@ services:
     db:
         container_name: basaalt_database
         image: mysql
+        restart: always
         volumes:
             - mysql_data:/var/lib/mysql:rw
         environment:
@@ -44,6 +46,8 @@ services:
             - "8025:8025"
         environment:
             MH_STORAGE: memory
+        networks:
+            - symfony_app
 
 volumes:
     mysql_data:
