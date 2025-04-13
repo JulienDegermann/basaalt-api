@@ -7,7 +7,7 @@ services:
             - .:/var/www/html
         networks:
             - symfony_app
-            - traefik
+            - webgateway
         build:
             context: .
             dockerfile: Dockerfile
