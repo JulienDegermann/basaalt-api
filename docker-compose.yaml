@@ -16,7 +16,6 @@ services:
         labels:
             - "traefik.enable=true" 
             - "traefik.http.routers.basaalt.rule=Host(`basaalt.ju2breizh.fr`)"
-            - "traefik.http.routers.basaalt.entrypoints=web"
             - "traefik.http.services.basaalt.loadbalancer.server.port=80"
         depends_on:
             db:
@@ -61,5 +60,5 @@ volumes:
 networks:
     symfony_app:
         driver: bridge
-    traefik:
+    webgateway:
         external: true
