@@ -35,14 +35,15 @@ RUN curl -sS https://get.symfony.com/cli/installer | bash \
 RUN a2enmod rewrite
 
 COPY ./docker.sh /var/opt/docker.sh
+COPY ./apache.conf /etc/apache2/sites-available/000-default.conf
 COPY . /var/www/html
+
 
 # Donner les bonnes permissions et propriétaires
 RUN find /var/www/html -path /var/www/html/.git -prune -o -exec chmod 755 {} \;
-RUN find /var/www/html -path /var/www/html/.git -prune -o -exec chown www-data:www-data {} \;
-RUN chmod -R 755 /var/www/html/public && chown -R www-data:www-data /var/www/html/public
+RUN chown -R www-data:www-data /var/www/html
+RUN chmod -R 755 /var/www/html
 
-COPY ./apache.conf /etc/apache2/sites-available/000-default.conf
 
 
 RUN chmod +x /var/opt/docker.sh
