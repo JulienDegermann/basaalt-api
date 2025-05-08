@@ -6,16 +6,20 @@ services:
         networks:
             - webgateway
             - basaalt
+        ports:
+            - "9000:80"
         build:
             context: .
             dockerfile: DockerFile
-        labels:
-            - traefik.enable=true
-            - traefik.http.routers.basaalt-php.rule=Host(`basaalt.ju2breizh.fr`)
+        # labels:
+        #     - traefik.enable=true
+        #     - traefik.http.routers.basaalt-php.rule=Host(`basaalt.ju2breizh.fr`)
         depends_on:
             db:
                 condition: service_healthy
                 restart: true
+        volumes:
+            - .:/var/www/html:rw
     db:
         container_name: basaalt_database
         image: mysql
@@ -35,6 +39,8 @@ services:
             timeout: 10s
         networks:
             - basaalt
+        ports:
+            - "9010:3306"
     # mailhog:
     #     image: mailhog/mailhog
     #     container_name: hr-mailhog

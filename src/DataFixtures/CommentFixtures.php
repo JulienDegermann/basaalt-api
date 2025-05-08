@@ -13,18 +13,18 @@ class CommentFixtures extends Fixture implements DependentFixtureInterface
   public function load(ObjectManager $manager): void
   {
 
-    $comments = [];
-    for ($i = 0; $i < 10; $i++) {
-      $comments[] = "Comment number $i";
-    }
+  //   $comments = [];
+  //   for ($i = 0; $i < 10; $i++) {
+  //     $comments[] = "Comment number $i";
+  //   }
 
-    foreach ($comments as $key => $comment) {
-      $current = new Comment();
-      $current->setAuthor($this->getReference('commentUser' . rand(0, 2), User::class));
-      $current->setText($comment);
-      $manager->persist($current);
-    }
-    $manager->flush();
+  //   foreach ($comments as $key => $comment) {
+  //     $current = new Comment();
+  //     $current->setAuthor($this->getReference('commentUser' . rand(0, 2), User::class));
+  //     $current->setText($comment);
+  //     $manager->persist($current);
+  //   }
+  //   $manager->flush();
   }
 
   public function getDependencies(): array
