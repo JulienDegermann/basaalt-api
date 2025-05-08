@@ -76,7 +76,7 @@ class UserFixtures extends Fixture
     $password = $this->hasher->hashPassword($superAdmin, 'monMotDePasse123!');
     $superAdmin
       ->setUserName('SuperAdmin')
-      ->setEmail($_ENV('SUPER_ADMIN_EMAIL'))
+      ->setEmail(getenv('SUPER_ADMIN_EMAIL'))
       ->setRoles(['ROLE_SUPER_ADMIN', 'ROLE_ADMIN', 'ROLE_USER'])
       ->setPassword($password)
       ->setFirstName('Super')

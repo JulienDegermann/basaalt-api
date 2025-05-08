@@ -31,12 +31,5 @@ services:
     arguments:
       $jwtTokenSecret: '%env(APP_SECRET)%'
 
-  App\DataFixtures\UserFixtures:
-    parameters:
-      SUPER_ADMIN_EMAIL: '%env(SUPER_ADMIN_EMAIL)%'
-
-
-
-
   # add more service definitions when explicit configuration is needed
   # please note that last definitions always *replace* previous ones
