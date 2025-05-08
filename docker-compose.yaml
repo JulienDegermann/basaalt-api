@@ -6,14 +6,12 @@ services:
         networks:
             - webgateway
             - basaalt
-        ports:
-            - "9000:80"
         build:
             context: .
             dockerfile: DockerFile
-        # labels:
-        #     - traefik.enable=true
-        #     - traefik.http.routers.basaalt-php.rule=Host(`basaalt.ju2breizh.fr`)
+        labels:
+            - traefik.enable=true
+            - traefik.http.routers.basaalt-php.rule=Host(`basaalt.ju2breizh.fr`)
         depends_on:
             db:
                 condition: service_healthy
