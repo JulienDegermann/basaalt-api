@@ -6,6 +6,8 @@ services:
         networks:
             - webgateway
             - basaalt
+        ports:
+            - "9000:80"
         build:
             context: .
             dockerfile: DockerFile
@@ -35,6 +37,8 @@ services:
             timeout: 10s
         networks:
             - basaalt
+        ports:
+            - "9010:3306"
     # mailhog:
     #     image: mailhog/mailhog
     #     container_name: hr-mailhog
