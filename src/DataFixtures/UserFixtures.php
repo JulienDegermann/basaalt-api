@@ -6,14 +6,12 @@ use App\Entity\User;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class UserFixtures extends Fixture
 {
 
   public function __construct(
-    private readonly UserPasswordHasherInterface $hasher,
-    private readonly ParameterBagInterface $params
+    private readonly UserPasswordHasherInterface $hasher
 
   ) {}
 
@@ -78,7 +76,7 @@ class UserFixtures extends Fixture
     $password = $this->hasher->hashPassword($superAdmin, 'monMotDePasse123!');
     $superAdmin
       ->setUserName('SuperAdmin')
-      ->setEmail($this->params->get('SUPER_ADMIN_EMAIL'))
+      ->setEmail($_ENV['SUPER_ADMIN_EMAIL'])
       ->setRoles(['ROLE_SUPER_ADMIN', 'ROLE_ADMIN', 'ROLE_USER'])
       ->setPassword($password)
       ->setFirstName('Super')
