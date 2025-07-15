@@ -3,8 +3,8 @@
 namespace App\Events\EventsSubscribers;
 
 use DateTimeImmutable;
-use Doctrine\Common\EventSubscriber;
 use Doctrine\Persistence\Event\LifecycleEventArgs;
+use Doctrine\Common\EventSubscriber;
 
 class UpdateSubscriber implements EventSubscriber
 {
