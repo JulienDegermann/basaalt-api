@@ -8,6 +8,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -45,9 +46,12 @@ class UserCrudController extends AbstractCrudController
             DateTimeField::new('createdAt', 'Date de création')->onlyOnIndex(),
             DateTimeField::new('updatedAt', 'Date de modification')->onlyOnIndex(),
             // DateTimeField::new('birthDate', 'Date de naissance')->hideOnIndex(),
+            TextField::new('password', 'Mot de passe')->onlyWhenCreating(),
             TextField::new('address', 'Adresse')->hideOnIndex(),
             AssociationField::new('city', 'Ville')
                 ->hideOnIndex(),
+            BooleanField::new('isValid', 'Vérifié')
+                ->renderAsSwitch(false),
             ChoiceField::new('roles', 'Rôles')
                 ->setChoices([
                     'Visiteur' => 'ROLE_USER',

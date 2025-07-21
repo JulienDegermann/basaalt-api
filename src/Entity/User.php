@@ -213,16 +213,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Groups(['read:user'])]
     #[Assert\Valid]
     private Collection $comments;
-    
+
     #[ORM\OneToMany(targetEntity: Order::class, mappedBy: 'buyer', cascade: ['remove', 'persist'], orphanRemoval: true)]
     #[Groups(['read:user'])]
     private Collection $orders;
-    
+
     #[Groups(['write:order'])]
     #[ORM\ManyToOne(targetEntity: City::class, inversedBy: 'userCities')]
     private ?City $city;
 
+    #[ORM\Column(nullable: false)]
+    private bool $isValid = false;
 
+    public function getIsValid(): bool
+    {
+        return $this->isValid;
+    }
+
+    public function setIsValid(bool $isValid): static
+    {
+        $this->isValid = $isValid;
+
+        return $this;
+    }
 
     public function getId(): ?int
     {

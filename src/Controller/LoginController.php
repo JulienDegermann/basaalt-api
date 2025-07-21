@@ -3,20 +3,22 @@
 namespace App\Controller;
 
 use Exception;
+use UpdatePassword;
 use App\Entity\User;
-use App\Service\Interface\GetUserFromTokenInterface;
-use App\Service\Interface\JWTTokenDecodeInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use App\Service\Interface\UserRepositoryInterface;
-use App\Service\Interface\JWTTokenGeneratorServiceInterface;
+use App\Service\Interface\JWTTokenDecodeInterface;
 use App\Service\Interface\UpdatePasswordInterface;
+use App\Service\Interface\UserRepositoryInterface;
+use App\Service\Interface\GetUserFromTokenInterface;
+use App\Service\Interface\JWTTokenGeneratorServiceInterface;
+use App\Service\JWTTokenGeneratorService\CheckJWTIsValidService;
+use App\Service\NotifierService\PasswordRecoveryNotifierService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
-use App\Service\NotifierService\PasswordRecoveryNotifierService;
+use App\Service\JWTTokenGeneratorService\CheckJWTIsValidServiceInterface;
 use App\Service\NotifierService\SendTokenByEmailNotifierServiceInterface;
-use UpdatePassword;
 
 class LoginController extends AbstractController
 {
@@ -28,7 +30,8 @@ class LoginController extends AbstractController
         private readonly SendTokenByEmailNotifierServiceInterface $sendToken,
         private readonly JWTTokenDecodeInterface $JWTTokenDecode,
         private readonly GetUserFromTokenInterface $getUserFromToken,
-        private readonly UpdatePasswordInterface $updatePassword
+        private readonly UpdatePasswordInterface $updatePassword,
+        private readonly CheckJWTIsValidServiceInterface $checkJWT
     ) {}
 
     #[Route('/login', name: 'app_login')]
@@ -101,9 +104,21 @@ class LoginController extends AbstractController
             }
         } catch (Exception $e) {
             $this->addFlash('error', $e->getMessage());
-            dd($e->getMessage());
         }
 
         return $this->render('login/password_reset.html.twig', ['token' => $token]);
+    }
+
+
+    #[Route('/verification-email?token={token}', name: 'app_verify_email')]
+    public function verifyEmail(
+        string $token,
+        Request $request
+    ) {
+        if (($this->checkJWT)($token)) {
+            // code here
+        } else {
+            $this->addFlash('error', 'Lien invalide. Veuilez réessayer avec un nouveau lien.');
+        }
     }
 }

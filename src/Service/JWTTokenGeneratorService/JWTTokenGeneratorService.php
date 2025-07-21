@@ -9,9 +9,7 @@ final class JWTTokenGeneratorService implements JWTTokenGeneratorServiceInterfac
 {
     public function __construct(
         private readonly string $jwtTokenSecret,
-    )
-    {
-    }
+    ) {}
 
     private function base64UrlEncode($data)
     {

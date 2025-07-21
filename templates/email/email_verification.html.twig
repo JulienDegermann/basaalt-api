@@ -1,0 +1,14 @@
+{% extends 'email/base_email.html.twig' %}
+{% block content %}
+	<section>
+		<div class="container">
+			<p>Bonjour
+				{{ user.firstName }},</p>
+			<p>Merci de cliquer sur le lien ci-dessous pour vérifier votre e-mail :
+			</p>
+			<p>
+				<a class="cta" href="{{ url }}">Cliquez ici</a>
+			</p>
+		</div>
+	</section>
+{% endblock %}

@@ -5,41 +5,112 @@
 	</head>
 	<style>:root
 	{
-		--LIGHT: #FFF;
-		--DARK: #333333;
-		--PRIMARY: #DAD178;
-		--GRAY: #999999;
+		--light: #FFF;
+		--dark: #333333;
+		--primary: #DAD178;
+		--gray: #999999;
+		--primary: #FFDA22;
+		--dark: #000f08;
+		--light: #F6F8FF;
+		--gray: #77878B;
+	}
 
-		--PRIMARUY: #FFDA22;
-		--DARK: #000f08;
-		--LIGHT: #F6F8FF;
-		--GRAY: #77878B;
-		* {
-			margin: 0;
-			padding: 0;
-			box-sizing: border-box;
+	/* import fonts from google */
+	@font-face {
+		font-family: 'RockSalt';
+		src: url("../fonts/rock_salt/rocksalt-regular.ttf");
+	}
+	@font-face {
+		font-family: 'PlusJakartaSans';
+		src: url("../fonts/plus_jakarta_sans/static/plusjakartasans-regular.ttf");
+	}
+	@font-face {
+		font-family: 'MetalMania';
+		src: url("../fonts/metal_mania/metalmania-regular.ttf");
+	}
+	@font-face {
+		font-family: 'Englebert';
+		src: url("../fonts/englebert/englebert-regular.ttf");
+	}
+	@font-face {
+		font-family: 'Marhey';
+		src: url("../fonts/marhey/marhey-variablefont_wght.ttf");
+	}
+	* {
+		margin: 0;
+		padding: 0;
+		box-sizing: border-box;
+		transition: all 0.3s;
+	}
+	body {
+		background: var(--light);
+		color: var(--dark);
+		font-size: 18px;
+		width: 100vw;
+		height: 100vh;
+		font-family: 'PlusJakartaSans', sans-serif;
+	}
+	p {
+		margin: 1rem auto;
+	}
+	a {
+		text-decoration: none;
+		color: inherit;
+		display: inline-block;
+		width: max-content;
+		&:hover {
+			color: var(--primary);
 		}
-
-		body {
-			padding: 2rem;
+	}
+	section {
+		padding: 0.5rem;
+		width: 100%;
+	}
+	section.container {
+		max-width: 1000px;
+		margin: 0 auto;
+		padding: 1rem;
+	}
+	section.sectiontitle {
+		border-bottom: 1px solid var(--dark);
+		font-size: 2rem;
+		margin-bottom: 3rem;
+		font-family: marhey;
+	}
+	#signature {
+		margin-top: 2rem;
+	}
+	button {
+		padding: 1rem 2rem;
+		margin: 1rem;
+		font-size: 1rem;
+		border-radius: 50px;
+		text-transform: uppercase;
+		border-radius: 8px;
+		cursor: pointer;
+		&.link {
+			color: var(--primary);
+			text-decoration: none;
+			background: none;
+			border: none;
+			text-transform: lowercase;
+			border-bottom: 1px solid var(--primary);
+			padding: 1rem;
 		}
-
-		a {
-			display: inline-block;
-			width: max-content;
-			margin-top: 1rem;
-		}
-
-		section {
-			width: 100%;
-		}
-
-		section .container {
-			max-width: 500px;
-		}
-
-		#signature {
-			margin-top: 2rem;
+	}
+	.cta {
+		padding: 0.75rem 2rem;
+		margin: .5rem auto;
+		border-radius: 30px;
+		font-weight: bold;
+		width: max-content;
+		border: 1px solid transparent;
+		border: 1px solid var(--primary);
+		color: var(--dark);
+		background: var(--primary);
+		&:hover {
+			background: var(--dark);
+			color: var(--primary);
 		}
 	}
 </style>
@@ -47,7 +118,8 @@
 	{% block content %}{% endblock %}
 	{% block signature %}
 		<section id="signature">
-			<div</html</html class="container">
+
+			<div class="container">
 				<p>
 					Basaalt - Team Support</p>
 			</div>

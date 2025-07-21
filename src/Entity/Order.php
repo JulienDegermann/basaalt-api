@@ -8,6 +8,7 @@ use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use ApiPlatform\Metadata\Put;
+use App\Events\EventsSubscribers\OrderSubscriber;
 use App\Repository\OrderRepository;
 use App\Traits\AddressTrait;
 use App\Traits\DateEntityTrait;
@@ -66,7 +67,7 @@ class Order
     #[ORM\Column(type: 'string', nullable: true)]
     #[Groups(['read:orders', 'read:order', 'read:date'])]
     private ?string $deliveryUrl;
-    
+
     #[ORM\ManyToOne(targetEntity: City::class, inversedBy: 'deliveryCity')]
     #[Groups(['read:orders', 'read:order', 'write:order'])]
     private ?City $city;
