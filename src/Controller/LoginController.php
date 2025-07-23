@@ -19,6 +19,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use App\Service\JWTTokenGeneratorService\CheckJWTIsValidServiceInterface;
 use App\Service\NotifierService\SendTokenByEmailNotifierServiceInterface;
+use App\Service\SetEmailAsVerified\SetEmailAsVerified;
+use App\Service\SetEmailAsVerified\SetEmailAsVerifiedInterface;
 
 class LoginController extends AbstractController
 {
@@ -113,12 +115,17 @@ class LoginController extends AbstractController
     #[Route('/verification-email?token={token}', name: 'app_verify_email')]
     public function verifyEmail(
         string $token,
-        Request $request
+        Request $request,
+        SetEmailAsVerifiedInterface $setIsVerified
     ) {
         if (($this->checkJWT)($token)) {
-            // code here
+            $setIsVerified($token);
         } else {
             $this->addFlash('error', 'Lien invalide. Veuilez réessayer avec un nouveau lien.');
         }
+
+        $this->addFlash('success', 'success');
+
+        return $this->redirectToRoute('app_home');
     }
 }
