@@ -1,0 +1,11 @@
+{% extends 'email/base_email.html.twig' %}
+{% block content %}
+	<section>
+		<div class="container">
+			<p>Bonjour
+				{{ buyer.firstName }},
+			</p>
+			<p>Nous avons bien reçu votre commande. Vous serez informé par mail de son traitement.</p>
+		</div>
+	</section>
+{% endblock %}

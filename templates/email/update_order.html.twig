@@ -1,0 +1,21 @@
+{% extends 'email/base_email.html.twig' %}
+{% block content %}
+	<section>
+		<div class="container">
+			<p>Bonjour
+				{{ order.buyer.firstName }},
+			</p>
+			<p>Votre commande a été mise à jour.
+				<br/>
+				{{ (status ? 'Statut : ' ~ status ~ '<br />' : '')|raw }}
+				<br/>
+				{% if (order.deliveryUrl) %}
+					Suivi de livraison :
+					<a href={{order.deliveryUrl}} target="_blank">
+						Suivez votre commande</a>
+					<br/>
+				{% endif %}
+			</p>
+		</p>
+	</div>
+</section>{% endblock %}

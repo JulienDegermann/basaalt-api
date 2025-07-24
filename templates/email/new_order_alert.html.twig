@@ -1,0 +1,10 @@
+{% extends 'email/base_email.html.twig' %}
+{% block content %}
+	<section>
+		<div class="container">
+			<p>Une nouvelles commande a été effectuée ! Clique
+				<a href={{url}}>ici</a>
+				pour la consulter.</p>
+		</div>
+	</section>
+{% endblock %}

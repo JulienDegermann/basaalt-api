@@ -38,3 +38,7 @@ services:
     App\Events\EventsSubscribers\UserCreateOrUpdateEmailSubscriber:
         tags:
             - { name: doctrine.event_subscriber }
+    
+    App\Events\EventsSubscribers\UpdateOrCreateOrderSubscriber:
+        tags:
+            - { name: doctrine.event_subscriber }

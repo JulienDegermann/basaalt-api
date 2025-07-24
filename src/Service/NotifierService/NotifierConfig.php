@@ -22,7 +22,7 @@ class NotifierConfig implements NotifierConfigInterface
 
     public function __construct()
     {
-        $this->from = "no-reply.blablavelo@julien-degermann.fr";
+        $this->from = $_ENV['MAILER_DNS_ADDRESS'];
         $this->signature = "\n \n Julien, Équipe de Développement.";
     }
 }
