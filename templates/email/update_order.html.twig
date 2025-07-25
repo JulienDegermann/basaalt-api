@@ -3,16 +3,13 @@
 	<section>
 		<div class="container">
 			<p>Bonjour
-				{{ order.buyer.firstName }},
-			</p>
-			<p>Votre commande a été mise à jour.
-				<br/>
-				{{ (status ? 'Statut : ' ~ status ~ '<br />' : '')|raw }}
-				<br/>
+				{{ order.buyer.firstName }},</p>
+			<p>Votre commande a été mise à jour.</p>
+			<p>{{ (status ? 'Statut : ' ~ status ~ '<br />' : '')|raw }}
 				{% if (order.deliveryUrl) %}
 					Suivi de livraison :
-					<a href={{order.deliveryUrl}} target="_blank">
-						Suivez votre commande</a>
+					<a href={{ order.deliveryUrl }} target="_blank">
+						{{ order.deliveryUrl }}</a>
 					<br/>
 				{% endif %}
 			</p>

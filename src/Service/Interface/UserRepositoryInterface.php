@@ -11,4 +11,8 @@ interface UserRepositoryInterface
     public function findOneBy(array $criteria, ?array $orderBy = null);
 
     public function find($id);
+
+    public function findAdmins(): array;
+    
+    public function findBandMembers(): array;
 }
