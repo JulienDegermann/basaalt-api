@@ -41,7 +41,7 @@ class LoginController extends AbstractController
             if ($this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_SUPER_ADMIN')) {
                 return $this->redirectToRoute('admin');
             }
-            return $this->redirectToRoute('home');
+            return $this->redirectToRoute('app_home');
         }
 
         // get the login error if there is one

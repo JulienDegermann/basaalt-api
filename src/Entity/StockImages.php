@@ -66,7 +66,7 @@ use Vich\UploaderBundle\Mapping\Annotation as Vich;
                     // 'mimeTypes' => ['image/jpeg', 'image/png', 'image/jpg', 'image/gif'],
                     mimeTypes: ['image/jpeg'],
                     mimeTypesMessage: 'Image invalide : formats acceptés jpeg',
-                // 'mimeTypesMessage' => 'Image invalide : formats ±acceptés jpeg, jpg, png, gif',
+                    // 'mimeTypesMessage' => 'Image invalide : formats ±acceptés jpeg, jpg, png, gif',
                 ),
             ]
         )

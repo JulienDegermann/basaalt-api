@@ -40,9 +40,7 @@ class StockCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         return [
-            // AssociationField::new('article', 'Article'),
             AssociationField::new('article', 'Article')->hideOnForm(),
-//            TextField::new('size', 'Taille'),
             ChoiceField::new('size', 'Taille')
                 ->setChoices([
                     'TU' => 'TU',

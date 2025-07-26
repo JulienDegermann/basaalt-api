@@ -2,13 +2,14 @@
 
 namespace App\Form;
 
-use App\Entity\User;
+use App\Entity\BandMember;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Vich\UploaderBundle\Form\Type\VichImageType;
 
 class BandMemberType extends AbstractType
 {
@@ -29,13 +30,6 @@ class BandMemberType extends AbstractType
                     'placeholder' => 'Doe'
                 ]
             ])
-            ->add('email', EmailType::class, [
-                'label' => 'Email',
-                'required' => true,
-                'attr' => [
-                    'placeholder' => 'ton@mail.fr'
-                ]
-            ])
             ->add('bandRole', TextType::class, [
                 'label' => 'Rôle dans le groupe',
                 'required' => true,
@@ -47,13 +41,21 @@ class BandMemberType extends AbstractType
                 'label' => 'Date de naissance',
                 'required' => false,
                 'widget' => 'single_text'
+            ])
+            ->add('file', VichImageType::class, [
+                'label' => 'Photo',
+                'required' => false,
+                'download_uri' => false,
+                'image_uri' => true, // Affiche l’image actuelle
+                'allow_delete' => true, // Active la case à cocher de suppression
+                'delete_label' => 'Supprimer la photo',
             ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => User::class,
+            'data_class' => BandMember::class,
         ]);
     }
 }

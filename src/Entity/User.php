@@ -179,31 +179,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     ])]
     private ?DateTimeImmutable $birthDate = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    #[Groups(['read:user', 'read:bands', 'read:band', 'write:band'])]
-    #[Assert\Sequentially([
-        new Assert\Type(
-            type: 'string',
-            message: 'Rôle invalide : doit être une chaîne de caractères'
-        ),
-        new Assert\Length(
-            min: 2,
-            max: 255,
-            minMessage: 'Rôle invalide : doit contenir au moins {{ limit }} caractères',
-            maxMessage: 'Rôle invalide : doit contenir au maximum {{ limit }} caractères'
-        ),
-        new Assert\Regex(
-            pattern: '/^[a-zA-Z\s\-\p{L}]{2,255}$/u',
-            message: 'Ce champ contient des caractères non autorisés.'
-        ),
-    ])]
-    private ?string $bandRole = null;
-
-    #[ORM\ManyToOne(inversedBy: 'bandMember')]
-    #[Groups(['read:user', 'write:user', 'read:user', 'write:band'])]
-    #[Assert\Valid]
-    private ?Band $band = null;
-
     #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'author', cascade: ['remove', 'persist'], orphanRemoval: true)]
     #[Groups(['read:user'])]
     #[Assert\Valid]
@@ -353,30 +328,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setBirthDate(?DateTimeImmutable $birthDate): static
     {
         $this->birthDate = $birthDate;
-
-        return $this;
-    }
-
-    public function getBandRole(): ?string
-    {
-        return $this->bandRole;
-    }
-
-    public function setBandRole(?string $bandRole): static
-    {
-        $this->bandRole = $bandRole;
-
-        return $this;
-    }
-
-    public function getBand(): ?Band
-    {
-        return $this->band;
-    }
-
-    public function setBand(?Band $band): static
-    {
-        $this->band = $band;
 
         return $this;
     }

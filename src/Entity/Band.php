@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Entity\User;
 use App\Entity\Album;
+use App\Entity\BandMember;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Put;
 use App\Traits\DateEntityTrait;
@@ -12,8 +13,8 @@ use App\Repository\BandRepository;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\GetCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\HttpFoundation\File\File;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -113,7 +114,7 @@ class Band
     #[Groups(['read:band', 'read:bands', 'write:band', 'read:albums'])]
     private ?string $genre;
 
-    #[ORM\OneToMany(targetEntity: User::class, mappedBy: 'band', cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(targetEntity: BandMember::class, mappedBy: 'band', cascade: ['persist', 'remove'], orphanRemoval:true)]
     #[Groups(['read:band', 'read:bands', 'write:band'])]
     private Collection $bandMember;
 
@@ -202,7 +203,7 @@ class Band
         return $this->bandMember;
     }
 
-    public function addBandMember(User $bandMember): static
+    public function addBandMember(BandMember $bandMember): static
     {
         if (!$this->bandMember->contains($bandMember)) {
             $this->bandMember->add($bandMember);
@@ -212,7 +213,7 @@ class Band
         return $this;
     }
 
-    public function removeBandMember(User $bandMember): static
+    public function removeBandMember(BandMember $bandMember): static
     {
         if ($this->bandMember->removeElement($bandMember)) {
             // set the owning side to null (unless already changed)

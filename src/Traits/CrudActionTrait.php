@@ -10,8 +10,7 @@ trait CrudActionTrait
 {
 
   public function configureDefaultActions(Actions $actions): Actions
-  {
-
+  {    
     return $actions
       ->add(Crud::PAGE_INDEX, 'detail')
       ->update(Crud::PAGE_INDEX, 'edit', function (Action $action) {

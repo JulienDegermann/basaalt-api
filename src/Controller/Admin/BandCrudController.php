@@ -8,6 +8,8 @@ use App\Traits\CrudActionTrait;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
+use Symfony\Component\DomCrawler\Field\FileFormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
@@ -48,6 +50,8 @@ class BandCrudController extends AbstractCrudController
             TextareaField::new('description'),
             CollectionField::new('bandMember', 'Memnbres du groupe')
                 ->setEntryType(BandMemberType::class)
+                ->allowDelete($this->isGranted('ROLE_SUPER_ADMIN')) 
+                ->allowAdd($this->isGranted('ROLE_SUPER_ADMIN')) 
         ];
     }
 }
