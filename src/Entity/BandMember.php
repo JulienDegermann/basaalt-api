@@ -94,7 +94,7 @@ class BandMember
         mimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'],
         mimeTypesMessage: 'Le format de l\'image n\'est pas valide. Les formats valides sont {{ types }}.'
     )]
-    private ?File $file;
+    private ?File $file = null;
 
     #[ORM\Column(length: 255, nullable: true)]
     #[Groups(['read:band', 'read:bands'])]
