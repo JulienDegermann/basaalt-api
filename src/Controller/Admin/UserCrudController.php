@@ -27,75 +27,75 @@ class UserCrudController extends AbstractCrudController
     {
         $actions = $this->configureDefaultActions($actions);
 
-        // $actions
-        //     ->update(Crud::PAGE_INDEX, 'delete', function (Action $action) {
-        //         return $action->displayIf(function ($entity) {
-        //             if ($this->isGranted('ROLE_SUPER_ADMIN')) {
-        //                 return !in_array('ROLE_SUPER_ADMIN', $entity->getRoles(), true) ||
-        //                     $this->getUser() === $entity;
-        //             }
+        $actions
+            ->update(Crud::PAGE_INDEX, 'delete', function (Action $action) {
+                return $action->displayIf(function ($entity) {
+                    if ($this->isGranted('ROLE_SUPER_ADMIN')) {
+                        return !in_array('ROLE_SUPER_ADMIN', $entity->getRoles(), true) ||
+                            $this->getUser() === $entity;
+                    }
 
-        //             if ($this->isGranted('ROLE_ADMIN')) {
-        //                 return $this->getUser() === $entity;
-        //             }
-        //             return false;
-        //         });
-        //     })
-        //     ->update(Crud::PAGE_DETAIL, 'delete', function (Action $action) {
-        //         return $action->displayIf(function ($entity) {
-        //             if ($this->isGranted('ROLE_SUPER_ADMIN')) {
-        //                 return !in_array('ROLE_SUPER_ADMIN', $entity->getRoles(), true) ||
-        //                     $this->getUser() === $entity;
-        //             }
+                    if ($this->isGranted('ROLE_ADMIN')) {
+                        return $this->getUser() === $entity;
+                    }
+                    return false;
+                });
+            })
+            ->update(Crud::PAGE_DETAIL, 'delete', function (Action $action) {
+                return $action->displayIf(function ($entity) {
+                    if ($this->isGranted('ROLE_SUPER_ADMIN')) {
+                        return !in_array('ROLE_SUPER_ADMIN', $entity->getRoles(), true) ||
+                            $this->getUser() === $entity;
+                    }
 
-        //             if ($this->isGranted('ROLE_ADMIN')) {
-        //                 return $this->getUser() === $entity;
-        //             }
-        //             return false;
-        //         });
-        //     })
-        //     ->update(Crud::PAGE_INDEX, 'edit', function (Action $action) {
-        //         return $action->displayIf(function ($entity) {
-        //             if ($this->isGranted('ROLE_SUPER_ADMIN')) {
-        //                 return !in_array('ROLE_SUPER_ADMIN', $entity->getRoles(), true) || $this->getUser() === $entity;
-        //             }
+                    if ($this->isGranted('ROLE_ADMIN')) {
+                        return $this->getUser() === $entity;
+                    }
+                    return false;
+                });
+            })
+            ->update(Crud::PAGE_INDEX, 'edit', function (Action $action) {
+                return $action->displayIf(function ($entity) {
+                    if ($this->isGranted('ROLE_SUPER_ADMIN')) {
+                        return !in_array('ROLE_SUPER_ADMIN', $entity->getRoles(), true) || $this->getUser() === $entity;
+                    }
 
-        //             if ($this->isGranted('ROLE_ADMIN')) {
-        //                 return (!in_array('ROLE_SUPER_ADMIN', $entity->getRoles(), true) &&
-        //                     !in_array('ROLE_ADMIN', $entity->getRoles(), true) || $this->getUser() === $entity);
-        //             }
-        //             return false;
-        //         });
-        //     })
-        //     ->update(Crud::PAGE_DETAIL, 'edit', function (Action $action) {
-        //         return $action->displayIf(function ($entity) {
-        //             if ($this->isGranted('ROLE_SUPER_ADMIN')) {
-        //                 return !in_array('ROLE_SUPER_ADMIN', $entity->getRoles(), true) || $this->getUser() === $entity;
-        //             }
+                    if ($this->isGranted('ROLE_ADMIN')) {
+                        return (!in_array('ROLE_SUPER_ADMIN', $entity->getRoles(), true) &&
+                            !in_array('ROLE_ADMIN', $entity->getRoles(), true) || $this->getUser() === $entity);
+                    }
+                    return false;
+                });
+            })
+            ->update(Crud::PAGE_DETAIL, 'edit', function (Action $action) {
+                return $action->displayIf(function ($entity) {
+                    if ($this->isGranted('ROLE_SUPER_ADMIN')) {
+                        return !in_array('ROLE_SUPER_ADMIN', $entity->getRoles(), true) || $this->getUser() === $entity;
+                    }
 
-        //             if ($this->isGranted('ROLE_ADMIN')) {
-        //                 return (!in_array('ROLE_SUPER_ADMIN', $entity->getRoles(), true) &&
-        //                     !in_array('ROLE_ADMIN', $entity->getRoles(), true) || $this->getUser() === $entity);
-        //             }
-        //             return false;
-        //         });
-        //     })
-        //     ->update(CRUD::PAGE_INDEX, 'detail', function (Action $action) {
-        //         return $action->displayIf(function ($entity) {
-        //             if ($this->isGranted('ROLE_SUPER_ADMIN')) {
-        //                 return !in_array('ROLE_SUPER_ADMIN', $entity->getRoles(), true) ||
-        //                     $this->getUser() === $entity;
-        //             }
+                    if ($this->isGranted('ROLE_ADMIN')) {
+                        return (!in_array('ROLE_SUPER_ADMIN', $entity->getRoles(), true) &&
+                            !in_array('ROLE_ADMIN', $entity->getRoles(), true) || $this->getUser() === $entity);
+                    }
+                    return false;
+                });
+            })
+            ->update(CRUD::PAGE_INDEX, 'detail', function (Action $action) {
+                return $action->displayIf(function ($entity) {
+                    if ($this->isGranted('ROLE_SUPER_ADMIN')) {
+                        return !in_array('ROLE_SUPER_ADMIN', $entity->getRoles(), true) ||
+                            $this->getUser() === $entity;
+                    }
 
-        //             if ($this->isGranted('ROLE_ADMIN')) {
-        //                 return (!in_array('ROLE_SUPER_ADMIN', $entity->getRoles(), true) &&
-        //                     !in_array('ROLE_ADMIN', $entity->getRoles(), true) || $this->getUser() === $entity);
-        //             }
+                    if ($this->isGranted('ROLE_ADMIN')) {
+                        return (!in_array('ROLE_SUPER_ADMIN', $entity->getRoles(), true) &&
+                            !in_array('ROLE_ADMIN', $entity->getRoles(), true) || $this->getUser() === $entity);
+                    }
 
-        //             return false;
-        //         });
-        //     })
-        // ;
+                    return false;
+                });
+            })
+        ;
 
 
         return $actions;
@@ -128,7 +128,7 @@ class UserCrudController extends AbstractCrudController
             TextField::new('email', 'Email')->setPermission('ROLE_SUPER_ADMIN'),
             DateTimeField::new('createdAt', 'Date de création')->hideOnForm(),
             DateTimeField::new('updatedAt', 'Date de modification')->onlyOnDetail(),
-            TextField::new('password', 'Mot de passe')->onlyWhenCreating(),
+            TextField::new('password', 'Mot de passe')->onlyOnForms()->onlyWhenCreating(),
             TextField::new('address', 'Adresse')->hideOnIndex()->onlyWhenCreating(),
             AssociationField::new('city', 'Ville')
                 ->hideOnIndex()

@@ -93,7 +93,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             maxMessage: 'Mot de passe invalide : doit contenir au maximum {{ limit }} caractères'
         ),
         new Assert\Regex(
-            pattern: '/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{12,255}$/',
+            pattern: '/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{12,}$/',
             message: 'Mot de passe invalide : doit contenir au minimum 1 lettre majuscule, 1 lettre minuscule, 1 chiffre et 1 caractère spécial.'
         ),
     ])]

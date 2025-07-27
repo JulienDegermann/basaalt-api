@@ -16,10 +16,10 @@ services:
             db:
                 condition: service_healthy
                 restart: true
-        # volumes: # for dev env only
-        #     - .:/var/www/html:rw
+        volumes: # for dev env only
+            - .:/var/www/html:rw
         ports:
-            - 80
+            - 9999:80
     db:
         container_name: basaalt_database
         image: mysql
