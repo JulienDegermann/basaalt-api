@@ -4,7 +4,7 @@ services:
         container_name: basaalt-php
         restart: always
         networks:
-            # - webgateway
+            - webgateway
             - basaalt
         build:
             context: .
@@ -16,10 +16,8 @@ services:
             db:
                 condition: service_healthy
                 restart: true
-        volumes: # for dev env only
-            - .:/var/www/html:rw
-        ports:
-            - 9999:80
+        ports: 
+            - 80   
     db:
         container_name: basaalt_database
         image: mysql
@@ -40,18 +38,7 @@ services:
         networks:
             - basaalt
         ports:
-            - "9010:3306"
-    mailhog: # for dev env only
-        image: mailhog/mailhog
-        container_name: basaalt-mailhog
-        ports:
-            - "1025:1025"
-            - "8025:8025"
-        environment:
-            MH_STORAGE: memory
-        networks:
-            - basaalt
-
+            - 3306
 volumes:
     mysql_basaalt_data:
         driver: local
@@ -59,5 +46,5 @@ volumes:
 networks:
     basaalt:
         driver: bridge
-    # webgateway:
-    #     external: true
+    webgateway:
+        external: true
