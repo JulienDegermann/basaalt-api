@@ -42,7 +42,6 @@ class ArticleCommandTest extends TestCase
         $this->articleCommand->setQuantity($quantity);
         $this->assertIsInt($this->articleCommand->getQuantity());
         $this->assertEquals($quantity, $this->articleCommand->getQuantity());
-        $this->assertGreaterthan($quantity, $this->articleCommand->getQuantity());
     }
 
     /**
