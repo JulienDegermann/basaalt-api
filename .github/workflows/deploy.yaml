@@ -1,12 +1,14 @@
 name: deploy
 
 on:
-    push:
+    pull_request:
+        types:
+            - closed
         branches:
             - main
 jobs:
     deploy:
-        name: Deploy to RPI
+        name: Connect to RPI and Deploy
         runs-on: ubuntu-latest
         environment: production
         steps:
